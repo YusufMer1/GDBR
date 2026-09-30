@@ -21,12 +21,15 @@ class Genre(models.Model):
 
 
 class Game(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=150)
     description = models.TextField()
-    cover_image = models.ImageField(upload_to='games/', null=True, blank=True)
+    cover_image = models.ImageField(upload_to='games/', null=True, max_length=255, blank=True)
     release_date = models.DateField(null=True, blank=True)
     genres = models.ManyToManyField(Genre, blank=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(
+        max_length=200,
+        unique=True
+    )
     rating = models.FloatField(null=True, blank=True)
     igdb_id = models.IntegerField(
         unique=True,

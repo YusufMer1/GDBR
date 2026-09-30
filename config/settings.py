@@ -133,6 +133,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
 
     "account",
     "games",
@@ -286,6 +288,10 @@ STORAGES = {
     "default": {
         "BACKEND":
             "django.core.files.storage.FileSystemStorage",
+    },
+
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
 
     "staticfiles": {
