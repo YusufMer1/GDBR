@@ -1,0 +1,152 @@
+<div class="container-fluid px-0 mt-4">
+        <div class="row gx-0">
+            <div class="col-lg-3 px-0">
+                <div class="sidebar-panel">
+                    {% include 'partials/_sidebar.html' %}
+                </div>
+            </div>
+            <div class="col-lg-9 ps-lg-4 pe-lg-5">
+                <div class="d-flex justify-content-between align-items-center mb-3 px-4 pt-4">
+                    <div>
+                        <h1 class="mb-1">Welcome to the Game Hub!</h1>
+                        <p class="text-muted mb-0">Discover and manage your favorite games.</p>
+                    </div>
+                    <div class="text-end text-muted small">
+                        {% if selected_genre %}
+                            Showing {{ games.paginator.count }} games in "{{ selected_genre|capfirst }}"
+                        {% else %}
+                            Showing {{ games.paginator.count }} games
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row gy-4">
+                    {% for game in games %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+
+                            <div class="card game-card h-100 shadow-sm position-relative overflow-hidden">
+                                {% if game.cover_image %}
+                                    <a href="{% url 'game_detail' game.slug %}" class="text-decoration-none">
+                                        <img
+                                            src="{{ game.cover_image.url }}"
+                                            class="card-img-top"
+                                            alt="{{ game.title }}"
+                                        >
+                                    </a>
+                                {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center no-image-placeholder">
+                                        <span class="text-muted">No image</span>
+                                    </div>
+                                {% endif %}
+
+                                <div class="card-body pt-3 px-3">
+                                    <h5 class="game-card-title text-center text-dark">
+                                        <a href="{% url 'game_detail' game.slug %}" class="text-dark text-decoration-none">{{ game.title }}</a>
+                                    </h5>
+                                    <p class="game-card-meta text-center mb-2">
+                                        {% if game.rating %}
+                                            <strong>{{ game.rating|floatformat:1 }}</strong> / 10 · {{ game.release_date|date:"Y" }}
+                                        {% else %}
+                                            {{ game.release_date|date:"Y" }} · No rating yet
+                                        {% endif %}
+                                    </p>
+                                    {% if user.is_authenticated %}
+
+                                        <div class="d-flex justify-content-center">
+
+                                            {% if game in user_games %}
+
+                                                <button
+                                                    class="btn btn-success btn-sm px-4"
+                                                    disabled
+                                                >
+                                                    ✓ Added
+                                                </button>
+
+                                            {% else %}
+
+                                                <form
+                                                    method="POST"
+                                                    action="{% url 'add_to_list' game.slug %}"
+                                                >
+
+                                                    {% csrf_token %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-primary btn-sm px-4"
+                                                    >
+                                                        Add to List
+                                                    </button>
+
+                                                </form>
+
+                                            {% endif %}
+                                            
+
+                                        </div>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                    {% if games.paginator.num_pages > 1 %}
+
+                    <nav aria-label="Game pagination" class="mt-5 mb-5">
+                        <ul class="pagination justify-content-center">
+
+                            {# Önceki sayfa #}
+                            {% if games.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                    href="?page={{ games.previous_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}">
+                                        &laquo; Önceki
+                                    </a>
+                                </li>
+                            {% endif %}
+
+
+                            {# Sayfa numaraları #}
+                            {% for num in games.paginator.page_range %}
+
+                                {% if games.number == num %}
+
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                            {{ num }}
+                                        </span>
+                                    </li>
+
+                                {% else %}
+
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                        href="?page={{ num }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            {# Sonraki sayfa #}
+                            {% if games.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                    href="?page={{ games.next_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_genre %}&genre={{ selected_genre }}{% endif %}">
+                                        Sonraki &raquo;
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>

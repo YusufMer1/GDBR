@@ -1,0 +1,800 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    About GDBR
+{% endblock %}
+
+{% block css_files %}
+
+<style>
+
+    .about-page {
+        min-height: 100vh;
+
+        padding: 70px 24px 90px;
+
+        background:
+            radial-gradient(
+                circle at 85% 0%,
+                rgba(114, 103, 255, 0.11),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 10% 15%,
+                rgba(255, 193, 7, 0.05),
+                transparent 25%
+            ),
+            #070c15;
+
+        color: #fff;
+    }
+
+
+    .about-container {
+        width: 100%;
+        max-width: 1250px;
+
+        margin: 0 auto;
+    }
+
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .about-hero {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1.4fr)
+            minmax(280px, 0.8fr);
+
+        gap: 60px;
+
+        align-items: center;
+
+        margin-bottom: 80px;
+    }
+
+
+    .about-label {
+        display: inline-block;
+
+        margin-bottom: 14px;
+
+        color: #7267ff;
+
+        font-size: 12px;
+        font-weight: 900;
+
+        letter-spacing: 3px;
+    }
+
+
+    .about-hero h1 {
+        margin: 0 0 20px;
+
+        color: #fff;
+
+        font-size: 54px;
+        font-weight: 950;
+
+        line-height: 1.05;
+    }
+
+
+    .about-hero h1 span {
+        color: #ffc107;
+    }
+
+
+    .about-hero p {
+        max-width: 720px;
+
+        margin: 0;
+
+        color: #a5adba;
+
+        font-size: 17px;
+
+        line-height: 1.8;
+    }
+
+
+    /* =========================
+       BRAND CARD
+    ========================= */
+
+    .about-brand-card {
+        position: relative;
+
+        padding: 38px 32px;
+
+        overflow: hidden;
+
+        border-radius: 24px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #141b29,
+                #0d1420
+            );
+
+        border:
+            1px solid rgba(255,255,255,0.08);
+
+        box-shadow:
+            0 24px 60px rgba(0,0,0,0.30);
+    }
+
+
+    .about-brand-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        top: -80px;
+        right: -70px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(114, 103, 255, 0.13);
+
+        filter: blur(8px);
+    }
+
+
+    .about-brand-logo {
+        position: relative;
+
+        z-index: 1;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .about-logo-box {
+        width: 56px;
+        height: 56px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #7267ff,
+                #4438d8
+            );
+
+        color: #fff;
+
+        font-size: 29px;
+        font-weight: 950;
+
+        box-shadow:
+            0 10px 28px rgba(79,70,229,0.32);
+    }
+
+
+    .about-logo-text {
+        color: #fff;
+
+        font-size: 38px;
+        font-weight: 950;
+
+        letter-spacing: 3px;
+    }
+
+
+    .about-brand-card h3 {
+        position: relative;
+
+        z-index: 1;
+
+        margin: 0 0 10px;
+
+        color: #fff;
+
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+
+    .about-brand-card p {
+        position: relative;
+
+        z-index: 1;
+
+        margin: 0;
+
+        color: #8f96a3;
+
+        font-size: 14px;
+
+        line-height: 1.7;
+    }
+
+
+    /* =========================
+       SECTION TITLE
+    ========================= */
+
+    .about-section-title {
+        margin-bottom: 30px;
+    }
+
+
+    .about-section-title span {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #7267ff;
+
+        font-size: 11px;
+        font-weight: 900;
+
+        letter-spacing: 2.5px;
+    }
+
+
+    .about-section-title h2 {
+        margin: 0;
+
+        color: #fff;
+
+        font-size: 34px;
+        font-weight: 900;
+    }
+
+
+    /* =========================
+       FEATURES
+    ========================= */
+
+    .about-features {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 22px;
+
+        margin-bottom: 80px;
+    }
+
+
+    .about-feature-card {
+        padding: 28px 26px;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111827,
+                #0c1320
+            );
+
+        border:
+            1px solid rgba(255,255,255,0.07);
+
+        transition:
+            transform .25s ease,
+            border-color .25s ease,
+            box-shadow .25s ease;
+    }
+
+
+    .about-feature-card:hover {
+        transform: translateY(-5px);
+
+        border-color:
+            rgba(114,103,255,0.32);
+
+        box-shadow:
+            0 18px 40px rgba(0,0,0,0.28);
+    }
+
+
+    .about-feature-icon {
+        width: 46px;
+        height: 46px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 18px;
+
+        border-radius: 12px;
+
+        background:
+            rgba(114,103,255,0.12);
+
+        color: #8b83ff;
+
+        font-size: 22px;
+    }
+
+
+    .about-feature-card h3 {
+        margin: 0 0 10px;
+
+        color: #fff;
+
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+
+    .about-feature-card p {
+        margin: 0;
+
+        color: #9098a5;
+
+        font-size: 14px;
+
+        line-height: 1.7;
+    }
+
+
+    /* =========================
+       MISSION
+    ========================= */
+
+    .about-mission {
+        display: grid;
+
+        grid-template-columns:
+            1fr
+            1fr;
+
+        gap: 24px;
+
+        margin-bottom: 80px;
+    }
+
+
+    .mission-card {
+        padding: 32px;
+
+        border-radius: 20px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #111827,
+                #0b1220
+            );
+
+        border:
+            1px solid rgba(255,255,255,0.07);
+    }
+
+
+    .mission-card h3 {
+        margin: 0 0 12px;
+
+        color: #fff;
+
+        font-size: 23px;
+        font-weight: 900;
+    }
+
+
+    .mission-card p {
+        margin: 0;
+
+        color: #929aa7;
+
+        font-size: 15px;
+
+        line-height: 1.8;
+    }
+
+
+    .mission-card.highlight {
+        border-color:
+            rgba(255,193,7,0.15);
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(66,48,12,0.30),
+                #0b1220
+            );
+    }
+
+
+    .mission-card.highlight h3 {
+        color: #ffc107;
+    }
+
+
+    /* =========================
+       BOTTOM MESSAGE
+    ========================= */
+
+    .about-bottom {
+        padding: 44px 34px;
+
+        text-align: center;
+
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(114,103,255,0.10),
+                rgba(17,24,39,0.95)
+            );
+
+        border:
+            1px solid rgba(114,103,255,0.16);
+    }
+
+
+    .about-bottom h2 {
+        margin: 0 0 12px;
+
+        color: #fff;
+
+        font-size: 30px;
+        font-weight: 900;
+    }
+
+
+    .about-bottom p {
+        max-width: 720px;
+
+        margin: 0 auto;
+
+        color: #9ca3af;
+
+        font-size: 15px;
+
+        line-height: 1.7;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 950px) {
+
+        .about-hero {
+            grid-template-columns: 1fr;
+        }
+
+        .about-features {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .about-mission {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+        .about-page {
+            padding:
+                45px 16px 70px;
+        }
+
+        .about-hero h1 {
+            font-size: 40px;
+        }
+
+        .about-features {
+            grid-template-columns: 1fr;
+        }
+
+        .about-brand-card {
+            padding: 30px 24px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="about-page">
+
+    <div class="about-container">
+
+
+        <!-- HERO -->
+
+        <div class="about-hero">
+
+            <div>
+
+                <span class="about-label">
+                    ABOUT GDBR
+                </span>
+
+                <h1>
+                    Built for people who
+                    <span>love games.</span>
+                </h1>
+
+                <p>
+                    GDBR is a modern game discovery and personal library platform
+                    designed to help players explore great games, discover iconic
+                    series, revisit Game of the Year titles, and build their own
+                    personal collection.
+                </p>
+
+            </div>
+
+
+            <div class="about-brand-card">
+
+                <div class="about-brand-logo">
+
+                    <span class="about-logo-box">
+                        G
+                    </span>
+
+                    <span class="about-logo-text">
+                        DBR
+                    </span>
+
+                </div>
+
+                <h3>
+                    Game Database & Reviews
+                </h3>
+
+                <p>
+                    A simple and focused platform for discovering,
+                    organizing and exploring video games.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FEATURES -->
+
+        <div class="about-section-title">
+
+            <span>
+                WHAT GDBR OFFERS
+            </span>
+
+            <h2>
+                Everything in one place
+            </h2>
+
+        </div>
+
+
+        <div class="about-features">
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    🎮
+                </div>
+
+                <h3>
+                    Game Discovery
+                </h3>
+
+                <p>
+                    Search for games, explore ratings, release information
+                    and discover titles from different genres and eras.
+                </p>
+
+            </article>
+
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    ⭐
+                </div>
+
+                <h3>
+                    Personal Library
+                </h3>
+
+                <p>
+                    Add your favorite games to My Games and create
+                    a personal collection you can easily access anytime.
+                </p>
+
+            </article>
+
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    🏆
+                </div>
+
+                <h3>
+                    Game of the Year
+                </h3>
+
+                <p>
+                    Explore Game of the Year winners and nominees
+                    from different years through a dedicated archive.
+                </p>
+
+            </article>
+
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    🔗
+                </div>
+
+                <h3>
+                    Iconic Series
+                </h3>
+
+                <p>
+                    Discover major franchises and browse their games
+                    in recommended play order.
+                </p>
+
+            </article>
+
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Ratings & Information
+                </h3>
+
+                <p>
+                    View game ratings, release dates, descriptions,
+                    screenshots and other useful game information.
+                </p>
+
+            </article>
+
+
+
+            <article class="about-feature-card">
+
+                <div class="about-feature-icon">
+                    💬
+                </div>
+
+                <h3>
+                    Community Experience
+                </h3>
+
+                <p>
+                    Share your thoughts through comments and interact
+                    with game pages as your library grows.
+                </p>
+
+            </article>
+
+
+        </div>
+
+
+
+        <!-- MISSION -->
+
+        <div class="about-section-title">
+
+            <span>
+                OUR PURPOSE
+            </span>
+
+            <h2>
+                More than a game list
+            </h2>
+
+        </div>
+
+
+        <div class="about-mission">
+
+
+            <div class="mission-card">
+
+                <h3>
+                    Our Mission
+                </h3>
+
+                <p>
+                    GDBR aims to make discovering and organizing games
+                    simple, enjoyable and visually engaging. Instead of
+                    overwhelming users with unnecessary information,
+                    the platform focuses on the details that matter most
+                    when exploring a game.
+                </p>
+
+            </div>
+
+
+            <div class="mission-card highlight">
+
+                <h3>
+                    The GDBR Vision
+                </h3>
+
+                <p>
+                    Our goal is to create a growing destination where
+                    players can discover new experiences, revisit classic
+                    games and keep track of the titles that matter to them.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- END -->
+
+        <div class="about-bottom">
+
+            <h2>
+                Discover. Play. Remember.
+            </h2>
+
+            <p>
+                Whether you're searching for your next game,
+                exploring legendary franchises or building your
+                personal collection, GDBR is designed to keep
+                the experience simple and enjoyable.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

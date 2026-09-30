@@ -1,0 +1,51 @@
+{% for game in genre_games %}
+
+    <div class="genre-game-card">
+
+        <a
+            href="{% url 'game_detail_igdb' game.id %}"
+            class="genre-game-image"
+        >
+
+            {% if game.cover.image_id %}
+
+                <img
+                    src="https://images.igdb.com/igdb/image/upload/t_cover_big/{{ game.cover.image_id }}.jpg"
+                    alt="{{ game.name }}"
+                >
+
+            {% else %}
+
+                <div class="genre-no-image">
+                    No Image
+                </div>
+
+            {% endif %}
+
+        </a>
+
+
+        <div class="genre-game-info">
+
+            <h3>
+                {{ game.name }}
+            </h3>
+
+
+            {% if game.rating %}
+
+                <div class="genre-rating">
+
+                    <span>★</span>
+
+                    {{ game.rating|floatformat:1 }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endfor %}

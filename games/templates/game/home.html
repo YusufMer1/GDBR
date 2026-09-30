@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'game/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'game/css/trending.css' %}">
+    <link rel="stylesheet" href="{% static 'game/css/yearly.css' %}">
+    <link rel="stylesheet" href="{% static 'game/css/goty-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'game/css/favorite_games.css' %}">
+    <link rel="stylesheet" href="{% static "game/css/game_series.css" %}">
+    <link rel="stylesheet" href="{% static 'game/css/genre_bar.css' %}">
+    <link rel="stylesheet" href="{% static 'game/css/featured_libraries.css' %}">
+    
+{% endblock %}
+
+{% block title %}
+    Ana Sayfa
+{% endblock %}
+
+{% block content %}
+    {% if trending_games %}
+        {% include "game/trending_games.html" %}
+    {% endif %}
+
+    {% include "game/yearly_games.html" %}   
+
+    <a href="{% url 'game_of_the_year' %}" class="goty-banner">
+
+        <div
+            class="goty-banner-image"
+            style="background-image: url('{% static 'game/images/goty-banner.jpg' %}');"
+        >
+
+            <div class="goty-overlay"></div>
+
+            <div class="goty-content">
+
+                <span class="goty-small-title">
+                    THE BEST OF EVERY YEAR
+                </span>
+
+                <h2>
+                    GAME OF THE YEAR
+                </h2>
+
+                <p>
+                    Discover the greatest games from 2008 to 2025
+                </p>
+
+                <span class="goty-button">
+                    Explore Winners
+                    <span class="goty-arrow">→</span>
+                </span>
+
+            </div>
+
+        </div>
+
+    </a>
+
+    {% include "game/favorite_games.html" %}
+
+    {% include "game/game_series.html" %}
+
+    {% include "game/genre_bar.html" %}
+    
+    {% include "game/featured_libraries.html" %}
+
+{% endblock  %}
+
+
+
+
+{% block js_files %}
+    <script src="{% static 'game/js/script.js' %}"></script>
+    <script src="{% static 'game/js/trending_games.js' %}"></script>
+    <script src="{% static 'game/js/genre_games.js' %}"></script>
+    <script src="{% static "game/js/series.js" %}"></script>
+{% endblock %}

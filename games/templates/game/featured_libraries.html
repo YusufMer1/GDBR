@@ -1,0 +1,159 @@
+
+{% if featured_libraries %}
+
+<section class="featured-libraries-section">
+
+    <div class="featured-libraries-container">
+
+
+        <!-- HEADER -->
+
+        <div class="featured-libraries-header">
+
+            <div>
+
+                <span class="featured-libraries-label">
+                    COMMUNITY COLLECTIONS
+                </span>
+
+                <h2>
+                    Featured Libraries
+                </h2>
+
+                <p>
+                    Discover hand-picked game collections
+                    created by the GDBR community.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- GRID -->
+
+        <div class="featured-libraries-grid">
+
+
+            {% for library in featured_libraries %}
+
+
+                <a
+                    href="{% url 'library_detail' library.id %}"
+                    class="featured-library-card"
+                >
+
+
+                    <!-- TOP -->
+
+                    <div class="featured-library-top">
+
+
+                        <div class="featured-library-icon">
+                            🎮
+                        </div>
+
+
+                        <span class="featured-public-badge">
+                            🌐 Public
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- TITLE -->
+
+                    <h3>
+                        {{ library.name }}
+                    </h3>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="featured-library-description">
+
+                        {% if library.description %}
+
+                            {{ library.description|truncatechars:110 }}
+
+                        {% else %}
+
+                            A game collection created by
+                            {{ library.user.username }}.
+
+                        {% endif %}
+
+                    </p>
+
+
+
+                    <!-- OWNER -->
+
+                    <div class="featured-library-owner">
+
+                        <div class="featured-library-avatar">
+
+                            {{ library.user.username|first|upper }}
+
+                        </div>
+
+
+                        <span>
+
+                            {{ library.user.username }}
+
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- FOOTER -->
+
+                    <div class="featured-library-footer">
+
+
+                        <span class="featured-library-games">
+
+                            🎮
+
+                            {{ library.games.count }}
+
+                            game{{ library.games.count|pluralize }}
+
+                        </span>
+
+
+
+                        <span class="featured-library-views">
+
+                            👁
+
+                            {{ library.views.count }}
+
+                        </span>
+
+
+                    </div>
+
+
+                </a>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endif %}

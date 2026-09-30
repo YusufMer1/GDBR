@@ -1,0 +1,67 @@
+<div class="navbar-search-wrapper">
+
+    <form
+        method="GET"
+        action="{% url 'search_games' %}"
+        class="navbar-search"
+        id="navbar-search-form"
+    >
+
+        <select
+            name="type"
+            id="navbar-search-type"
+            class="navbar-search-filter"
+            aria-label="Search type"
+        >
+
+            <option
+                value="games"
+                {% if search_type == "games" %}selected{% endif %}
+            >
+                Games
+            </option>
+
+            <option
+                value="libraries"
+                {% if search_type == "libraries" %}selected{% endif %}
+            >
+                Libraries
+            </option>
+
+            <option
+                value="users"
+                {% if search_type == "users" %}selected{% endif %}
+            >
+                Users
+            </option>
+
+        </select>
+
+
+        <input
+            type="search"
+            name="q"
+            id="navbar-search-input"
+            value="{{ search_query|default:'' }}"
+            placeholder="Search..."
+            autocomplete="off"
+            aria-label="Search"
+        >
+
+
+        <button
+            type="submit"
+            aria-label="Search"
+        >
+            🔍
+        </button>
+
+    </form>
+
+
+    <div
+        class="search-suggestions"
+        id="search-suggestions"
+    ></div>
+
+</div>

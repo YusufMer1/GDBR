@@ -1,0 +1,98 @@
+<section class="series-section">
+
+    <div class="series-header">
+
+        <span class="yellow-line"></span>
+
+        <div>
+            <h2>
+                Popular Series
+            </h2>
+
+            <p>
+                Explore iconic game series
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="series-slider">
+
+        <!-- SOL OK -->
+        <button
+            type="button"
+            class="series-arrow series-prev"
+            id="series-prev"
+        >
+            ‹
+        </button>
+
+
+        <!-- SERİLER -->
+        <div
+            class="series-row"
+            id="series-row"
+        >
+
+            {% for series in popular_series %}
+
+                <a
+                    href="{% url 'game_series_detail' series.slug %}"
+                    class="series-card"
+                >
+
+                    {% if series.cover_image %}
+
+                        <img
+                            src="{{ series.cover_image.url }}"
+                            alt="{{ series.name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="series-no-image">
+                            No Image
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="series-card-overlay"></div>
+
+
+                    <div class="series-card-content">
+
+                        <span>
+                            GAME SERIES
+                        </span>
+
+                        <h3>
+                            {{ series.name }}
+                        </h3>
+
+                        <p>
+                            Explore the series →
+                        </p>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- SAĞ OK -->
+        <button
+            type="button"
+            class="series-arrow series-next"
+            id="series-next"
+        >
+            ›
+        </button>
+
+    </div>
+
+</section>

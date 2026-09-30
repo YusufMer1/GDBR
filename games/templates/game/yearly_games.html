@@ -1,0 +1,199 @@
+<!-- ============================= -->
+<!-- 2026'NIN OYUNLARI -->
+<!-- ============================= -->
+
+<section class="year-games-section">
+
+    <div class="year-games-header">
+
+        <a href="{% url 'games_2026' %}" class="year-games-link">
+
+            <div class="year-games-title">
+
+                <span class="yellow-line"></span>
+
+                <h2 style="
+                    color: #fff;
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin: 0;
+                    line-height: 1;
+                ">
+                    Games of 2026
+                </h2>
+
+                <span class="title-arrow" style="
+                    color: #fff;
+                    font-size: 24px;
+                    font-weight: 700;
+                    line-height: 1;
+                    margin-left: 3px;
+                ">
+                   ❯ 
+                </span>
+
+            </div>
+
+        </a>
+
+        <a href="#" class="see-all-games">
+            Tümünü Gör →
+        </a>
+
+    </div>
+
+
+    {% if current_year_games %}
+
+        <!-- İLK 3 OYUN -->
+
+        <div class="featured-year-games">
+
+            {% for game in current_year_games|slice:":3" %}
+
+                <a href="{% url 'game_detail_igdb' game.id %}" class="featured-year-card">
+                    
+
+                    <div class="featured-image-wrapper">
+
+                        {% if game.cover_url %}
+
+                            <img
+                                src="{{ game.cover_url }}"
+                                alt="{{ game.name }}"
+                                class="featured-game-image"
+                            >
+
+                        {% else %}
+
+                            <div class="game-no-image">
+                                No Image
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="game-rank">
+                            #{{ forloop.counter }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="featured-game-content">
+
+                        <h3>
+                            {{ game.name }}
+                        </h3>
+
+
+                        {% if game.rating %}
+
+                            <div class="game-rating">
+
+                                <span class="star">★</span>
+
+                                <span>
+                                    {{ game.rating|floatformat:1 }}
+                                </span>
+
+                                <span class="rating-total">
+                                    / 100
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="game-year">
+                            2026
+                        </div>
+
+
+                        {% if game.summary %}
+
+                            <p>
+                                {{ game.summary|truncatechars:150 }}
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- KALAN 7 OYUN -->
+
+        <div class="small-year-games">
+
+            {% for game in current_year_games|slice:"3:10" %}
+
+                <a href="{% url 'game_detail_igdb' game.id %}" class="small-year-card">
+
+                    <div class="small-image-wrapper">
+
+                        {% if game.cover_url %}
+
+                            <img
+                                src="{{ game.cover_url }}"
+                                alt="{{ game.name }}"
+                                class="small-game-image"
+                            >
+
+                        {% else %}
+
+                            <div class="game-no-image">
+                                No Image
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="small-game-rank">
+                            #{{ forloop.counter|add:"3" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="small-game-info">
+
+                        <h3>
+                            {{ game.name }}
+                        </h3>
+
+                        {% if game.rating %}
+
+                            <div class="small-rating">
+
+                                <span class="star">★</span>
+
+                                {{ game.rating|floatformat:1 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="no-year-games">
+            Bu yıl için oyun bulunamadı.
+        </p>
+
+    {% endif %}
+
+</section>

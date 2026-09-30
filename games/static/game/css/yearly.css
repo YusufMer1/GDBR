@@ -1,0 +1,486 @@
+/* =========================================
+   2026'NIN OYUNLARI
+========================================= */
+
+.year-games-section {
+    margin-top: 55px;
+    margin-bottom: 70px;
+    padding: 0 55px;
+}
+
+
+/* =========================================
+   BAŞLIK
+========================================= */
+
+.year-games-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 22px;
+}
+
+
+.year-games-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.yellow-line {
+    width: 5px;
+    height: 32px;
+
+    background: #ffc107;
+
+    border-radius: 4px;
+}
+
+
+.year-games-title h2 {
+    margin: 0;
+
+    font-size: 29px;
+    font-weight: 800;
+
+    color: #111;
+}
+
+
+.title-arrow {
+    font-size: 36px;
+
+    line-height: 1;
+
+    color: #111;
+}
+
+
+.see-all-games {
+    color: #222;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+
+.see-all-games:hover {
+    color: #ffc107;
+}
+
+
+/* =========================================
+   İLK 3 BÜYÜK OYUN
+========================================= */
+
+.featured-year-games {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+
+/* BÜYÜK KART */
+
+.featured-year-card {
+
+    display: flex;
+
+    min-height: 390px;
+
+    background: #202020;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    color: white;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.featured-year-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* BÜYÜK RESİM */
+
+.featured-image-wrapper {
+
+    position: relative;
+
+    width: 48%;
+
+    min-width: 48%;
+
+    overflow: hidden;
+}
+
+
+.featured-game-image {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition:
+        transform 0.4s ease;
+}
+
+
+.featured-year-card:hover
+.featured-game-image {
+
+    transform: scale(1.04);
+}
+
+
+/* #1 #2 #3 */
+
+.game-rank {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    padding: 7px 15px;
+
+    background: #0878d1;
+
+    color: white;
+
+    font-weight: 800;
+
+    font-size: 15px;
+
+    border-bottom-right-radius: 10px;
+}
+
+
+/* BÜYÜK OYUN BİLGİSİ */
+
+.featured-game-content {
+
+    padding: 25px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    min-width: 0;
+}
+
+
+.featured-game-content h3 {
+
+    margin: 0 0 13px;
+
+    font-size: 21px;
+
+    font-weight: 750;
+
+    line-height: 1.25;
+}
+
+
+.game-rating {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+}
+
+
+.star {
+
+    color: #ffc107;
+
+    font-size: 18px;
+}
+
+
+.rating-total {
+
+    color: #999;
+
+    font-weight: 400;
+}
+
+
+.game-year {
+
+    color: #aaa;
+
+    font-size: 14px;
+
+    margin-bottom: 15px;
+}
+
+
+.featured-game-content p {
+
+    margin: 0;
+
+    color: #bbb;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   ALTTAKİ 7 KÜÇÜK OYUN
+========================================= */
+
+.small-year-games {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 14px;
+}
+
+
+/* KÜÇÜK KART */
+
+.small-year-card {
+
+    display: block;
+
+    background: #202020;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.small-year-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.year-games-header > a:first-child:hover .title-arrow {
+    color: #ffc107 !important;
+}
+.year-games-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.year-games-link:hover,
+.year-games-link:focus,
+.year-games-link:active {
+    text-decoration: none;
+}
+
+
+/* KÜÇÜK RESİM */
+
+.small-image-wrapper {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    overflow: hidden;
+}
+
+
+.small-game-image {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+.small-year-card:hover
+.small-game-image {
+
+    transform: scale(1.05);
+}
+
+
+/* KÜÇÜK NUMARA */
+
+.small-game-rank {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    background: #0878d1;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    padding: 5px 9px;
+
+    border-bottom-right-radius: 8px;
+}
+
+
+/* KÜÇÜK BİLGİ */
+
+.small-game-info {
+
+    padding: 11px;
+}
+
+
+.small-game-info h3 {
+
+    margin: 0 0 7px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.small-rating {
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1200px) {
+
+    .year-games-section {
+        padding: 0 30px;
+    }
+
+    .featured-year-card {
+        min-height: 350px;
+    }
+
+    .small-year-games {
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+}
+
+
+@media (max-width: 850px) {
+
+    .featured-year-games {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-year-card {
+        min-height: 330px;
+    }
+
+    .small-year-games {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .year-games-section {
+        padding: 0 15px;
+    }
+
+    .year-games-header {
+        align-items: flex-start;
+    }
+
+    .see-all-games {
+        display: none;
+    }
+
+    .year-games-title h2 {
+        font-size: 23px;
+        
+    }
+
+    .featured-year-card {
+        min-height: 280px;
+    }
+
+    .small-year-games {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}

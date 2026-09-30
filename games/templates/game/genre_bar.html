@@ -1,0 +1,101 @@
+<section class="genre-discover-section" data-genre-url="{% url 'genre_games_ajax' 999999 %}">
+
+    <div class="genre-heading">
+        
+        <div>
+            <span class="genre-label">
+                DISCOVER
+            </span>
+
+            <h2>
+                
+                Browse by Genre
+            </h2>
+        </div>
+
+    </div>
+
+
+    <!-- GENRE BUTTONS -->
+
+    <div class="genre-buttons">
+
+        <button
+            class="genre-button active"
+            data-genre-id="4"
+        >
+            Action
+        </button>
+
+        <button
+            class="genre-button"
+            data-genre-id="5"
+        >
+            Shooter
+        </button>
+
+        <button
+            class="genre-button"
+            data-genre-id="12"
+        >
+            RPG
+        </button>
+
+        <button
+            class="genre-button"
+            data-genre-id="31"
+        >
+            Adventure
+        </button>
+
+        <button
+            class="genre-button"
+            data-genre-id="10"
+        >
+            Racing
+        </button>
+
+        <button
+            class="genre-button"
+            data-genre-id="15"
+        >
+            Strategy
+        </button>
+
+    </div>
+
+
+    <!-- GAMES -->
+
+    <div class="genre-slider">
+
+        <button
+            type="button"
+            class="genre-slider-arrow genre-prev"
+            id="genre-prev"
+        >
+            ‹
+        </button>
+
+
+        <div
+            class="genre-games-row"
+            id="genre-games-row"
+        >
+
+            {% include "game/genre_games_cards.html" %}
+
+        </div>
+
+
+        <button
+            type="button"
+            class="genre-slider-arrow genre-next"
+            id="genre-next"
+        >
+            ›
+        </button>
+
+    </div>
+
+</section>

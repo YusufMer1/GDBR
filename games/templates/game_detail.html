@@ -1,0 +1,1021 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+    {{ game.title }} | GDBR
+{% endblock %}
+
+
+{% block css_files %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'game/css/style.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'game/css/game_detail.css' %}"
+    >
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="game-detail-page">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="game-hero">
+
+        <div class="game-hero-bg"></div>
+
+
+        <div class="container">
+
+
+            <div class="game-detail-card">
+
+
+                <!-- =================================================
+                     GAME COVER
+                ================================================== -->
+
+                <div class="game-cover-area">
+
+
+                    {% if game.cover_image %}
+
+                        <img
+                            src="{{ game.cover_image.url }}"
+                            alt="{{ game.title }}"
+                            class="game-detail-cover"
+                        >
+
+                    {% else %}
+
+                        <div class="game-no-cover">
+
+                            <span>
+                                No Image
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     GAME INFO
+                ================================================== -->
+
+                <div class="game-info">
+
+
+                    <div class="game-badge">
+                        GAME
+                    </div>
+
+
+                    <h1 class="game-title">
+                        {{ game.title }}
+                    </h1>
+
+
+
+                    <!-- RATING -->
+
+                    {% if game.rating %}
+
+                        <div class="game-rating">
+
+                            <span class="rating-star">
+                                ★
+                            </span>
+
+                            <span class="rating-number">
+                                {{ game.rating|floatformat:1 }}
+                            </span>
+
+                            <span class="rating-out-of">
+                                / 100
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- RELEASE DATE -->
+
+                    {% if game.release_date %}
+
+                        <div class="game-release">
+
+                            <span class="info-label">
+                                Release Date
+                            </span>
+
+                            <span class="info-value">
+                                {{ game.release_date|date:"d F Y" }}
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         ACTIONS
+                    ================================================== -->
+
+                    <div class="game-actions">
+
+
+                        <a
+                            href="{% url 'home' %}"
+                            class="back-button"
+                        >
+                            ← All Games
+                        </a>
+
+
+
+                        <!-- =============================================
+                             LOGGED IN USER
+                        ============================================== -->
+
+                        {% if request.user.is_authenticated %}
+
+
+                            {% if game.igdb_id %}
+
+
+                                <!-- =====================================
+                                     ADD TO LIBRARY DROPDOWN
+                                ====================================== -->
+
+                                <div class="game-library-dropdown">
+
+
+                                    <button
+                                        type="button"
+                                        class="game-library-button"
+                                    >
+
+                                        <span class="library-plus">
+                                            +
+                                        </span>
+
+
+                                        <span>
+                                            Add to Library
+                                        </span>
+
+
+                                        <span class="game-library-arrow">
+                                            ▾
+                                        </span>
+
+                                    </button>
+
+
+
+                                    <!-- =================================
+                                         DROPDOWN MENU
+                                    ================================== -->
+
+                                    <div class="game-library-menu">
+
+
+                                        {% if library_options %}
+
+
+                                            <div class="game-library-menu-title">
+                                                Your Libraries
+                                            </div>
+
+
+
+                                            <!-- =========================
+                                                 LIBRARIES
+                                            ========================== -->
+
+                                            {% for option in library_options %}
+
+                                                {% with library=option.library %}
+
+
+                                                    <!-- =================
+                                                         ALREADY ADDED
+                                                    ================== -->
+
+                                                    {% if option.contains_game %}
+
+
+                                                        <button
+                                                            type="button"
+                                                            class="game-library-item game-library-item-added"
+                                                            disabled
+                                                        >
+
+
+                                                            <span class="game-library-item-icon">
+
+                                                                {% if library.is_public %}
+
+                                                                    🌐
+
+                                                                {% else %}
+
+                                                                    🔒
+
+                                                                {% endif %}
+
+                                                            </span>
+
+
+
+                                                            <span class="game-library-item-info">
+
+
+                                                                <strong>
+                                                                    {{ library.name }}
+                                                                </strong>
+
+
+                                                                <small>
+
+                                                                    {{ library.games.count }}
+
+                                                                    game{{ library.games.count|pluralize }}
+
+                                                                    ·
+
+                                                                    {% if library.is_public %}
+
+                                                                        Public
+
+                                                                    {% else %}
+
+                                                                        Private
+
+                                                                    {% endif %}
+
+                                                                </small>
+
+
+                                                            </span>
+
+
+
+                                                            <span class="game-library-added">
+                                                                ✓ Added
+                                                            </span>
+
+
+                                                        </button>
+
+
+
+                                                    <!-- =================
+                                                         CAN BE ADDED
+                                                    ================== -->
+
+                                                    {% else %}
+
+
+                                                        <form
+                                                            method="POST"
+                                                            action="{% url 'add_game_to_library' %}"
+                                                        >
+
+                                                            {% csrf_token %}
+
+
+                                                            <input
+                                                                type="hidden"
+                                                                name="igdb_id"
+                                                                value="{{ game.igdb_id }}"
+                                                            >
+
+
+                                                            <input
+                                                                type="hidden"
+                                                                name="library_id"
+                                                                value="{{ library.id }}"
+                                                            >
+
+
+
+                                                            <button
+                                                                type="submit"
+                                                                class="game-library-item"
+                                                            >
+
+
+                                                                <span class="game-library-item-icon">
+
+                                                                    {% if library.is_public %}
+
+                                                                        🌐
+
+                                                                    {% else %}
+
+                                                                        🔒
+
+                                                                    {% endif %}
+
+                                                                </span>
+
+
+
+                                                                <span class="game-library-item-info">
+
+
+                                                                    <strong>
+                                                                        {{ library.name }}
+                                                                    </strong>
+
+
+                                                                    <small>
+
+                                                                        {{ library.games.count }}
+
+                                                                        game{{ library.games.count|pluralize }}
+
+                                                                        ·
+
+                                                                        {% if library.is_public %}
+
+                                                                            Public
+
+                                                                        {% else %}
+
+                                                                            Private
+
+                                                                        {% endif %}
+
+                                                                    </small>
+
+
+                                                                </span>
+
+
+                                                            </button>
+
+
+                                                        </form>
+
+
+                                                    {% endif %}
+
+
+                                                {% endwith %}
+
+                                            {% endfor %}
+
+
+
+                                        <!-- =================================
+                                             NO LIBRARIES
+                                        ================================== -->
+
+                                        {% else %}
+
+
+                                            <div class="game-library-empty">
+
+                                                You don't have any libraries yet.
+
+                                            </div>
+
+
+                                        {% endif %}
+
+
+
+                                        <!-- =================================
+                                             CREATE LIBRARY
+                                        ================================== -->
+
+                                        <div class="game-library-divider"></div>
+
+
+                                        <a
+                                            href="{% url 'my_libraries' %}"
+                                            class="game-library-create"
+                                        >
+
+                                            <span>
+                                                +
+                                            </span>
+
+                                            Create New Library
+
+                                        </a>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                            <!-- =============================================
+                                 GAME HAS NO IGDB ID
+                            ============================================== -->
+
+                            {% else %}
+
+
+                                <div class="library-unavailable">
+
+                                    Library saving unavailable
+
+                                </div>
+
+
+                            {% endif %}
+
+
+
+                        <!-- =============================================
+                             NOT LOGGED IN
+                        ============================================== -->
+
+                        {% else %}
+
+
+                            <a
+                                href="{% url 'login' %}"
+                                class="library-login-button"
+                            >
+                                Sign in to save
+                            </a>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+        <!-- =====================================================
+            GAME MEDIA
+        ====================================================== -->
+
+        <section class="game-media-section">
+
+            <div class="container">
+
+
+                <!-- =================================================
+                    MEDIA DATA ENDPOINT
+                ================================================== -->
+
+                <div
+                    id="game-media-loader"
+                    data-media-url="{% url 'game_media' game.slug %}"
+                    data-game-title="{{ game.title|escape }}"
+                ></div>
+
+
+
+                <!-- =================================================
+                    VIDEO
+                ================================================== -->
+
+                <div
+                    class="media-section-block"
+                    id="game-video-section"
+                >
+
+                    <div class="section-title">
+
+                        <span class="section-line"></span>
+
+                        <h2>
+                            Gameplay & Trailers
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        class="game-video-wrapper"
+                        id="game-videos"
+                    >
+
+                        <!--
+                            Sayfa IGDB'yi beklemeden açılır.
+                            Video daha sonra JavaScript ile buraya gelir.
+                        -->
+
+                        <div class="game-media-loading">
+
+                            <div class="media-loading-spinner"></div>
+
+                            <span>
+                                Loading video...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                    SCREENSHOTS
+                ================================================== -->
+
+                <div
+                    class="media-section-block"
+                    id="game-screenshot-section"
+                >
+
+                    <div class="section-title">
+
+                        <span class="section-line"></span>
+
+                        <h2>
+                            Screenshots
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        class="screenshot-gallery"
+                        id="game-screenshots"
+                    >
+
+                        <!-- =========================================
+                            MAIN SCREENSHOT PLACEHOLDER
+                        ========================================== -->
+
+                        <div
+                            class="screenshot-main"
+                            id="screenshot-main-container"
+                        >
+
+                            <div class="game-media-loading">
+
+                                <div class="media-loading-spinner"></div>
+
+                                <span>
+                                    Loading screenshots...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================================
+                            THUMBNAILS
+                        ========================================== -->
+
+                        <div
+                            class="screenshot-thumbnails"
+                            id="screenshot-thumbnails"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+    <!-- =====================================================
+         ABOUT / REVIEWS
+    ====================================================== -->
+
+    <section class="game-content">
+
+
+        <div class="container">
+
+
+
+            <!-- =================================================
+                 ABOUT THIS GAME
+            ================================================== -->
+
+            <div class="game-description-section">
+
+
+                <div class="section-title">
+
+                    <span class="section-line"></span>
+
+                    <h2>
+                        About This Game
+                    </h2>
+
+                </div>
+
+
+
+                {% if game.description %}
+
+
+                    <p class="game-description">
+
+                        {{ game.description }}
+
+                    </p>
+
+
+                {% else %}
+
+
+                    <p class="empty-text">
+
+                        No description available.
+
+                    </p>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 COMMUNITY REVIEWS
+            ================================================== -->
+
+            <div class="comments-section">
+
+
+                <div class="section-title">
+
+                    <span class="section-line"></span>
+
+                    <h2>
+                        Community Reviews
+                    </h2>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     COMMENT FORM
+                ================================================== -->
+
+                {% if request.user.is_authenticated %}
+
+
+                    <div class="comment-form-card">
+
+
+                        <div class="comment-form-header">
+
+
+                            <h3>
+                                Leave a comment
+                            </h3>
+
+
+                            <span>
+                                Share your thoughts about this game.
+                            </span>
+
+
+                        </div>
+
+
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+
+                            <textarea
+                                class="comment-textarea"
+                                id="comment"
+                                name="content"
+                                rows="4"
+                                placeholder="What do you think about this game?"
+                                required
+                            ></textarea>
+
+
+
+                            <div class="comment-submit-area">
+
+
+                                <button
+                                    type="submit"
+                                    class="comment-submit"
+                                >
+                                    Post Comment
+                                </button>
+
+
+                            </div>
+
+
+                        </form>
+
+
+                    </div>
+
+
+
+                {% else %}
+
+
+                    <div class="login-comment-box">
+
+
+                        <p>
+                            You need to log in to leave a comment.
+                        </p>
+
+
+                    </div>
+
+
+                {% endif %}
+
+                <div
+                    id="game-media-loader"
+                    data-media-url="{% url 'game_media' game.slug %}"
+                ></div>
+
+                <!-- =================================================
+                     COMMENTS LIST
+                ================================================== -->
+
+                <div class="comments-list">
+
+
+                    {% if comments %}
+
+
+                        {% for comment in comments %}
+
+
+                            <div class="comment-card">
+
+
+                                <div class="comment-top">
+
+
+                                    <div class="comment-user">
+
+
+                                        <div class="user-avatar">
+
+                                            {{ comment.user.username|first|upper }}
+
+                                        </div>
+
+
+
+                                        <div>
+
+
+                                            <strong>
+                                                {{ comment.user.username }}
+                                            </strong>
+
+
+                                            <small>
+                                                {{ comment.created_at|date:"d.m.Y H:i" }}
+                                            </small>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <p class="comment-content">
+
+                                    {{ comment.content }}
+
+                                </p>
+
+
+                            </div>
+
+
+                        {% endfor %}
+
+
+
+                    {% else %}
+
+
+                        <div class="no-comments">
+
+
+                            <div class="no-comments-icon">
+                                💬
+                            </div>
+
+
+                            <h3>
+                                No reviews yet
+                            </h3>
+
+
+                            <p>
+                                Be the first person to share your thoughts.
+                            </p>
+
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+{% endblock %}
+
+
+
+{% block js_files %}
+
+    <script src="{% static 'game/js/script.js' %}"></script>
+
+    <script src="{% static 'game/js/game_detail.js' %}"></script>
+
+
+
+    <!-- =====================================================
+         LIBRARY DROPDOWN
+    ====================================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const dropdown =
+                    document.querySelector(
+                        ".game-library-dropdown"
+                    );
+
+
+                if (!dropdown) {
+                    return;
+                }
+
+
+                const button =
+                    dropdown.querySelector(
+                        ".game-library-button"
+                    );
+
+
+                const menu =
+                    dropdown.querySelector(
+                        ".game-library-menu"
+                    );
+
+
+                if (!button || !menu) {
+                    return;
+                }
+
+
+
+                /* =============================================
+                   OPEN / CLOSE
+                ============================================== */
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        dropdown.classList.toggle(
+                            "open"
+                        );
+
+                    }
+                );
+
+
+
+                /* =============================================
+                   DON'T CLOSE WHEN CLICKING MENU
+                ============================================== */
+
+                menu.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+
+                /* =============================================
+                   CLICK OUTSIDE
+                ============================================== */
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        dropdown.classList.remove(
+                            "open"
+                        );
+
+                    }
+                );
+
+
+
+                /* =============================================
+                   ESC KEY
+                ============================================== */
+
+                document.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.key === "Escape"
+                        ) {
+
+                            dropdown.classList.remove(
+                                "open"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Game of the Year | Game Hub
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'game/css/goty.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="goty-page">
+
+    <div class="goty-page-header">
+
+        <span class="goty-page-label">
+            GAME OF THE YEAR
+        </span>
+
+
+        <p>
+            Discover the winning and nominated best games of each year.
+        </p>
+
+    </div>
+
+
+    <div class="goty-years">
+
+        {% for goty in goty_games %}
+
+            <section class="goty-year-row">
+
+                <div class="goty-year-panel">
+
+                    <h2>
+                        {{ goty.year }}
+                    </h2>
+
+                    <span>
+                        GAME OF THE YEAR
+                    </span>
+
+                    <div class="goty-year-line"></div>
+
+                </div>
+
+
+                <div class="goty-games-list">
+
+                    <!-- WINNER -->
+
+                    <a
+                        href="{% url 'game_detail' goty.winner.slug %}"
+                        class="goty-game-item goty-winner"
+                    >
+
+                        <span class="goty-game-badge winner-badge">
+                            🏆 WINNER
+                        </span>
+
+
+                        <div class="goty-game-image">
+
+                            {% if goty.winner.cover_image %}
+
+                                <img
+                                    src="{{ goty.winner.cover_image.url }}"
+                                    alt="{{ goty.winner.title }}"
+                                >
+
+                            {% else %}
+
+                                <div class="goty-no-image">
+                                    No Image
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <h3>
+                            {{ goty.winner.title }}
+                        </h3>
+
+                    </a>
+
+
+                    <!-- NOMINEES -->
+
+                    {% for game in goty.nominees.all|slice:":4" %}
+
+                        <a
+                            href="{% url 'game_detail' game.slug %}"
+                            class="goty-game-item"
+                        >
+
+                            <span class="goty-game-badge">
+                                NOMINEE
+                            </span>
+
+
+                            <div class="goty-game-image">
+
+                                {% if game.cover_image %}
+
+                                    <img
+                                        src="{{ game.cover_image.url }}"
+                                        alt="{{ game.title }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="goty-no-image">
+                                        No Image
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <h3>
+                                {{ game.title }}
+                            </h3>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% empty %}
+
+            <div class="goty-empty">
+                No Game of the Year data.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

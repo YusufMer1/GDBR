@@ -1,0 +1,154 @@
+        <section class="trending-section">
+
+            <div class="trending-header">
+                <div>
+                    <span class="trending-label">TRENDING NOW</span>
+
+                    <h2>
+                        Popular Games
+                    </h2>
+
+                    <p>
+                        highest-rated games
+                    </p>
+                </div>
+
+                <div class="trending-counter">
+                    <span id="trending-current">1</span>
+                    /
+                    {{ trending_games|length }}
+                </div>
+            </div>
+
+
+            <div class="trending-slider">
+
+                <!-- SOL OK -->
+
+                <button
+                    type="button"
+                    class="trending-arrow trending-prev"
+                    id="trending-prev"
+                >
+                    &#10094;
+                </button>
+
+
+                <!-- SLIDES -->
+
+                <div class="trending-slides">
+
+                    {% for game in trending_games %}
+
+                        <div
+                            class="trending-slide {% if forloop.first %}active{% endif %}"
+                            data-index="{{ forloop.counter0 }}"
+                        >
+
+                            <div class="trending-image">
+
+                                {% if game.cover.image_id %}
+
+                                    <img
+                                        src="https://images.igdb.com/igdb/image/upload/t_1080p/{{ game.cover.image_id }}.jpg"
+                                        alt="{{ game.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="trending-no-image">
+                                        No Image
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="trending-info">
+
+                                <span class="trending-number">
+                                    #{{ forloop.counter }}
+                                </span>
+
+                                <h2>
+                                    {{ game.name }}
+                                </h2>
+
+
+                                {% if game.rating %}
+
+                                    <div class="trending-rating">
+
+                                        <span class="star">★</span>
+
+                                        <strong>
+                                            {{ game.rating|floatformat:1 }}
+                                        </strong>
+
+                                        <span>
+                                            / 100
+                                        </span>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% if game.first_release_date %}
+
+                                    <p class="trending-release">
+                                        {{ game.first_release_date|date:"Y" }}
+                                    </p>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{% url 'game_detail_igdb' game.id %}"
+                                    class="trending-details-btn"
+                                >
+                                    View Details
+                                    <span>→</span>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- SAĞ OK -->
+
+                <button
+                    type="button"
+                    class="trending-arrow trending-next"
+                    id="trending-next"
+                >
+                    &#10095;
+                </button>
+
+            </div>
+
+
+            <!-- DOTS -->
+
+            <div class="trending-dots">
+
+                {% for game in trending_games %}
+
+                    <button
+                        type="button"
+                        class="trending-dot {% if forloop.first %}active{% endif %}"
+                        data-index="{{ forloop.counter0 }}"
+                        aria-label="Go to slide {{ forloop.counter }}"
+                    ></button>
+
+                {% endfor %}
+
+            </div>
+
+        </section>

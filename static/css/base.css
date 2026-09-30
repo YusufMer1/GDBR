@@ -1,0 +1,2436 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+body {
+    margin: 0;
+
+    background: #070c15;
+
+    color: #fff;
+}
+
+
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar .container-fluid {
+    position: relative;
+}
+
+
+.navbar-center {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: min(520px, 40vw);
+
+    z-index: 5;
+}
+
+
+
+/* =========================================================
+   SEARCH WRAPPER
+========================================================= */
+
+.navbar-search-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.navbar-search {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    overflow: hidden;
+
+    background: #111827;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 999px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.navbar-search:focus-within {
+    border-color:
+        rgba(114, 103, 255, 0.65);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(114, 103, 255, 0.12);
+}
+
+
+
+/* =========================================================
+   SEARCH FILTER
+========================================================= */
+
+.navbar-search-filter {
+    flex-shrink: 0;
+
+    height: 44px;
+
+    padding:
+        0 12px 0 15px;
+
+    border: none;
+
+    border-right:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    outline: none;
+
+    background: transparent;
+
+    color: #aeb6c5;
+
+    font-size: 12px;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+
+.navbar-search-filter option {
+    background: #0b1220;
+
+    color: #fff;
+}
+
+
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.navbar-search input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding:
+        11px 16px;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #fff;
+
+    font-size: 14px;
+}
+
+
+.navbar-search input::placeholder {
+    color: #6b7280;
+}
+
+
+
+/* =========================================================
+   SEARCH BUTTON
+========================================================= */
+
+.navbar-search button {
+    width: 48px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #cbd5e1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.navbar-search button:hover {
+    background:
+        rgba(114, 103, 255, 0.15);
+
+    color: #fff;
+}
+
+
+
+/* =========================================================
+   SEARCH AUTOCOMPLETE
+========================================================= */
+
+.search-suggestions {
+    position: absolute;
+
+    top: calc(100% + 9px);
+    left: 0;
+    right: 0;
+
+    z-index: 9999;
+
+    width: 100%;
+
+    min-width: 360px;
+    max-height: 380px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding: 7px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    border-radius: 14px;
+
+    background:
+        rgba(11, 18, 32, 0.98);
+
+    box-shadow:
+        0 22px 55px
+        rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(15px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform:
+        translateY(-5px);
+
+    transition:
+        opacity 0.12s ease,
+        transform 0.12s ease,
+        visibility 0.12s ease;
+}
+
+
+.search-suggestions.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translateY(0);
+}
+
+
+
+/* =========================================================
+   AUTOCOMPLETE ITEM
+========================================================= */
+
+.search-suggestion-item {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding:
+        10px 11px;
+
+    box-sizing: border-box;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: inherit;
+
+    text-align: left;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background 0.12s ease,
+        transform 0.12s ease;
+}
+
+
+.search-suggestion-item:hover {
+    background:
+        rgba(114, 103, 255, 0.11);
+
+    transform:
+        translateX(2px);
+
+    text-decoration: none;
+}
+
+
+
+/* =========================================================
+   AUTOCOMPLETE ICON
+========================================================= */
+
+.search-suggestion-icon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background:
+        rgba(114, 103, 255, 0.10);
+
+    border:
+        1px solid rgba(114, 103, 255, 0.10);
+
+    font-size: 15px;
+
+    line-height: 1;
+}
+
+
+
+/* =========================================================
+   AUTOCOMPLETE INFO
+========================================================= */
+
+.search-suggestion-info {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.search-suggestion-info strong {
+    display: block;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    color: #f4f6fa;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.search-suggestion-info small {
+    display: block;
+
+    color: #747e8d;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    line-height: 1.3;
+}
+
+
+
+/* =========================================================
+   AUTOCOMPLETE EMPTY
+========================================================= */
+
+.search-suggestions-empty {
+    padding: 14px;
+
+    color: #747e8d;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+
+/* =========================================================
+   AUTOCOMPLETE SCROLLBAR
+========================================================= */
+
+.search-suggestions::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.search-suggestions::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.search-suggestions::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.13);
+}
+
+
+
+/* =========================================================
+   GDBR BRAND
+========================================================= */
+
+.gdbr-brand {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 2px;
+
+    padding:
+        6px 12px;
+
+    text-decoration: none;
+
+    border-radius: 12px;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.gdbr-main {
+    color: #ffffff;
+
+    font-size: 28px;
+    font-weight: 950;
+
+    letter-spacing: 2px;
+
+    line-height: 1;
+
+    text-shadow:
+        0 0 18px
+        rgba(114, 103, 255, 0.22);
+}
+
+
+.gdbr-dot {
+    color: #ffc107;
+
+    font-size: 32px;
+    font-weight: 950;
+
+    line-height: 0.8;
+}
+
+
+.gdbr-brand:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(114, 103, 255, 0.07);
+
+    box-shadow:
+        0 0 22px
+        rgba(114, 103, 255, 0.10);
+}
+
+
+.gdbr-brand:hover .gdbr-main {
+    color: #8b83ff;
+}
+
+
+.gdbr-brand:hover .gdbr-dot {
+    color: #ffd54a;
+}
+
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.site-footer {
+    margin-top: 70px;
+
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(114, 103, 255, 0.08),
+            transparent 30%
+        ),
+        #080d16;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    color: #fff;
+}
+
+
+
+/* =========================================================
+   FOOTER MAIN
+========================================================= */
+
+.footer-container {
+    width: 100%;
+
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    padding:
+        55px 32px 45px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px, 1.4fr)
+        2fr;
+
+    gap: 80px;
+}
+
+
+
+/* =========================================================
+   FOOTER BRAND
+========================================================= */
+
+.footer-brand {
+    max-width: 420px;
+}
+
+
+.footer-logo {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 18px;
+
+    text-decoration: none;
+}
+
+
+.footer-logo-box {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7267ff,
+            #4438d8
+        );
+
+    color: #fff;
+
+    font-size: 22px;
+    font-weight: 950;
+
+    box-shadow:
+        0 8px 22px
+        rgba(79, 70, 229, 0.30);
+}
+
+
+.footer-logo-text {
+    color: #fff;
+
+    font-size: 29px;
+    font-weight: 950;
+
+    letter-spacing: 2px;
+}
+
+
+.footer-brand p {
+    margin: 0;
+
+    color: #8f96a3;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+}
+
+
+
+/* =========================================================
+   FOOTER LINKS
+========================================================= */
+
+.footer-links {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 45px;
+}
+
+
+.footer-column {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+
+.footer-column h4 {
+    margin:
+        0 0 7px;
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+.footer-column a {
+    position: relative;
+
+    color: #8f96a3;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.footer-column a:hover {
+    color: #ffc107;
+
+    transform:
+        translateX(4px);
+}
+
+
+
+/* =========================================================
+   FOOTER BOTTOM
+========================================================= */
+
+.footer-bottom {
+    width:
+        calc(100% - 64px);
+
+    max-width: 1436px;
+
+    margin: 0 auto;
+
+    padding:
+        20px 0 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.footer-bottom p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 12px;
+}
+
+
+.footer-bottom span {
+    color: #7267ff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .navbar .container-fluid {
+        flex-wrap: wrap;
+    }
+
+
+    .navbar-center {
+        position: static;
+
+        width: 100%;
+
+        transform: none;
+
+        order: 3;
+
+        margin-top: 12px;
+    }
+
+
+    .footer-container {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+    }
+
+
+    .footer-links {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .footer-container {
+        padding:
+            45px 20px 35px;
+    }
+
+
+    .footer-links {
+        grid-template-columns: 1fr;
+
+        gap: 28px;
+    }
+
+
+    .footer-bottom {
+        width:
+            calc(100% - 40px);
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .navbar-search-filter {
+        padding:
+            0 8px 0 10px;
+
+        font-size: 11px;
+    }
+
+
+    .navbar-search input {
+        padding:
+            10px 10px;
+
+        font-size: 13px;
+    }
+
+
+    .search-suggestions {
+        min-width: 100%;
+
+        max-height: 320px;
+    }
+
+}
+
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .navbar-search button {
+        width: 42px;
+    }
+
+
+    .navbar-search-filter {
+        max-width: 95px;
+    }
+
+
+    .search-suggestion-item {
+        padding:
+            9px 10px;
+    }
+
+
+    .search-suggestion-icon {
+        width: 33px;
+        height: 33px;
+
+        min-width: 33px;
+    }
+
+
+    .search-suggestion-info strong {
+        font-size: 12px;
+    }
+
+}
+
+/* =========================================================
+   NAVBAR USER AREA
+========================================================= */
+
+.navbar-user-card {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding:
+        5px 10px 5px 6px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.06);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    text-decoration: none;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        transform .15s ease;
+}
+
+
+.navbar-user-card:hover {
+    background:
+        rgba(114, 103, 255, 0.08);
+
+    border-color:
+        rgba(114, 103, 255, 0.22);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.navbar-user-avatar {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+
+.navbar-user-avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7267ff,
+            #5865f2
+        );
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 850;
+}
+
+
+.navbar-user-info {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    line-height: 1.15;
+}
+
+
+.navbar-user-name {
+    max-width: 120px;
+
+    overflow: hidden;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.navbar-user-subtitle {
+    margin-top: 2px;
+
+    color: #7f8998;
+
+    font-size: 10px;
+    font-weight: 650;
+}
+
+
+.navbar-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 8px;
+
+    padding:
+        8px 12px;
+
+    border-radius: 10px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    background:
+        rgba(255, 255, 255, 0.03);
+
+    color: #d9e0ea;
+
+    font-size: 12px;
+    font-weight: 750;
+
+    text-decoration: none;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+}
+
+
+.navbar-logout-btn:hover {
+    background:
+        rgba(239, 68, 68, 0.08);
+
+    border-color:
+        rgba(239, 68, 68, 0.25);
+
+    color: #fecaca;
+}
+
+
+@media (max-width: 760px) {
+
+    .navbar-user-info {
+        display: none;
+    }
+
+
+    .navbar-user-card {
+        padding: 5px;
+    }
+
+
+    .navbar-logout-btn {
+        padding:
+            7px 9px;
+
+        font-size: 11px;
+    }
+
+}
+
+/* =========================================================
+   GDBR AI WRAPPER
+========================================================= */
+
+.gdbr-ai {
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    z-index: 9999;
+
+    width: 76px;
+    height: 76px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ROBOT BUTTON
+========================================================= */
+
+.gdbr-ai-toggle {
+    position: absolute;
+
+    right: 0;
+    bottom: 0;
+
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border:
+        1px solid rgba(139, 131, 255, 0.48);
+
+    border-radius: 50%;
+
+    outline: none;
+
+    background:
+        radial-gradient(
+            circle at 34% 24%,
+            rgba(255, 255, 255, 0.25),
+            transparent 27%
+        ),
+        linear-gradient(
+            145deg,
+            #776cff,
+            #5147e8 55%,
+            #352da5
+        );
+
+    cursor: pointer;
+
+    overflow: visible;
+
+    isolation: isolate;
+
+    pointer-events: auto;
+
+    box-shadow:
+        0 14px 36px rgba(79, 70, 229, 0.42),
+        0 0 0 4px rgba(114, 103, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+    transform:
+        translate3d(0, 0, 0);
+
+    transition:
+        transform .58s cubic-bezier(.22, 1, .36, 1),
+        box-shadow .28s ease,
+        filter .28s ease;
+}
+
+
+/* =========================================================
+   CHAT OPEN POSITION
+========================================================= */
+
+.gdbr-ai.is-open
+.gdbr-ai-toggle,
+.gdbr-ai.is-open
+.gdbr-ai-toggle:hover {
+
+    transform:
+        translate3d(-406px, -8px, 0);
+
+    box-shadow:
+        0 20px 48px rgba(79, 70, 229, 0.54),
+        0 0 30px rgba(114, 103, 255, 0.50),
+        0 0 70px rgba(114, 103, 255, 0.18);
+}
+
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.gdbr-ai-toggle::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -8px;
+
+    z-index: -2;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            rgba(114, 103, 255, 0.95) 55deg,
+            transparent 115deg,
+            rgba(255, 210, 63, 0.75) 185deg,
+            transparent 250deg,
+            rgba(105, 225, 255, 0.70) 315deg,
+            transparent 360deg
+        );
+
+    opacity: 0;
+
+    filter: blur(6px);
+
+    transition:
+        opacity .25s ease;
+}
+
+
+.gdbr-ai-toggle::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 4px;
+
+    z-index: -1;
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ROBOT
+========================================================= */
+
+.gdbr-ai-robot {
+    position: relative;
+
+    width: 46px;
+    height: 53px;
+
+    display: block;
+
+    transform-origin:
+        50% 58%;
+
+    transform-style:
+        preserve-3d;
+
+    backface-visibility:
+        visible;
+
+    animation:
+        robotIdle 3s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   ANTENNA
+========================================================= */
+
+.robot-antenna {
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 3px;
+    height: 10px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 999px;
+
+    background: #dbe4ff;
+}
+
+
+.robot-antenna-light {
+    position: absolute;
+
+    top: -7px;
+    left: 50%;
+
+    width: 9px;
+    height: 9px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background: #ffd23f;
+
+    box-shadow:
+        0 0 8px #ffd23f,
+        0 0 16px rgba(255, 210, 63, 0.75);
+
+    animation:
+        antennaPulse 1.4s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   HEAD
+========================================================= */
+
+.robot-head {
+    position: absolute;
+
+    top: 10px;
+    left: 50%;
+
+    width: 40px;
+    height: 27px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius:
+        12px 12px 10px 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fbff,
+            #cbd6ff
+        );
+
+    box-shadow:
+        0 5px 12px rgba(0, 0, 0, 0.24),
+        inset 0 -3px 5px rgba(82, 72, 180, 0.12);
+}
+
+
+.robot-face {
+    position: absolute;
+
+    inset: 5px;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #252d4a,
+            #151b31
+        );
+
+    box-shadow:
+        inset 0 0 8px rgba(114, 103, 255, 0.12);
+}
+
+
+/* =========================================================
+   EARS
+========================================================= */
+
+.robot-ear {
+    position: absolute;
+
+    top: 8px;
+
+    width: 5px;
+    height: 11px;
+
+    border-radius: 4px;
+
+    background: #b8c5ff;
+}
+
+
+.robot-ear-left {
+    left: -4px;
+}
+
+
+.robot-ear-right {
+    right: -4px;
+}
+
+
+/* =========================================================
+   EYES
+========================================================= */
+
+.robot-eye {
+    position: absolute;
+
+    top: 6px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #8d83ff;
+
+    box-shadow:
+        0 0 5px #8d83ff,
+        0 0 10px rgba(141, 131, 255, 0.80);
+
+    animation:
+        robotBlink 4s infinite;
+}
+
+
+.robot-eye-left {
+    left: 7px;
+}
+
+
+.robot-eye-right {
+    right: 7px;
+}
+
+
+/* =========================================================
+   MOUTH
+========================================================= */
+
+.robot-mouth {
+    position: absolute;
+
+    left: 50%;
+    bottom: 4px;
+
+    width: 12px;
+    height: 3px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 999px;
+
+    background: #7a70ff;
+
+    box-shadow:
+        0 0 5px rgba(122, 112, 255, 0.70);
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.robot-body {
+    position: absolute;
+
+    top: 38px;
+    left: 50%;
+
+    width: 28px;
+    height: 15px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius:
+        7px 7px 8px 8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ced8ff,
+            #91a4ff
+        );
+
+    box-shadow:
+        0 5px 10px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =========================================================
+   CHEST
+========================================================= */
+
+.robot-chest {
+    position: absolute;
+
+    top: 4px;
+    left: 50%;
+
+    width: 11px;
+    height: 7px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 4px;
+
+    background: #4f46e5;
+}
+
+
+.robot-chest-light {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 4px;
+    height: 4px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #ffd23f;
+
+    box-shadow:
+        0 0 7px rgba(255, 210, 63, 0.85);
+}
+
+
+/* =========================================================
+   ARMS
+========================================================= */
+
+.robot-arm {
+    position: absolute;
+
+    top: 1px;
+
+    width: 5px;
+    height: 13px;
+
+    border-radius: 999px;
+
+    background: #c8d3ff;
+
+    transform-origin:
+        center top;
+}
+
+
+.robot-arm-left {
+    left: -5px;
+
+    transform:
+        rotate(22deg);
+}
+
+
+.robot-arm-right {
+    right: -5px;
+
+    transform:
+        rotate(-22deg);
+}
+
+
+/* =========================================================
+   LEGS
+========================================================= */
+
+.robot-leg {
+    position: absolute;
+
+    bottom: -8px;
+
+    width: 5px;
+    height: 10px;
+
+    border-radius:
+        0 0 5px 5px;
+
+    background: #c8d3ff;
+}
+
+
+.robot-leg-left {
+    left: 7px;
+}
+
+
+.robot-leg-right {
+    right: 7px;
+}
+
+
+/* =========================================================
+   ORBITS
+========================================================= */
+
+.ai-orbit {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    opacity: 0;
+}
+
+
+.ai-orbit-one {
+    width: 90px;
+    height: 90px;
+
+    border:
+        1px solid rgba(114, 103, 255, 0.62);
+
+    transform:
+        translate(-50%, -50%);
+}
+
+
+.ai-orbit-two {
+    width: 100px;
+    height: 100px;
+
+    border:
+        1px dashed rgba(255, 210, 63, 0.48);
+
+    transform:
+        translate(-50%, -50%);
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.gdbr-ai-toggle:hover {
+    filter:
+        brightness(1.13);
+
+    box-shadow:
+        0 20px 50px rgba(79, 70, 229, 0.60),
+        0 0 24px rgba(114, 103, 255, 0.70),
+        0 0 55px rgba(114, 103, 255, 0.30);
+}
+
+
+.gdbr-ai:not(.is-open)
+.gdbr-ai-toggle:hover {
+
+    transform:
+        translate3d(-5px, -6px, 0)
+        scale(1.06);
+}
+
+
+.gdbr-ai-toggle:hover::before {
+    opacity: 1;
+
+    animation:
+        aiGlowSpin 1.8s linear infinite;
+}
+
+
+/* =========================================================
+   ROBOT FLIP
+========================================================= */
+
+.gdbr-ai:not(.is-open)
+.gdbr-ai-toggle:hover
+.gdbr-ai-robot {
+
+    animation:
+        robotAcrobaticFlip
+        1.55s
+        cubic-bezier(.34, .02, .22, 1)
+        infinite;
+}
+
+
+/* =========================================================
+   CHAT OPEN ROBOT IDLE
+========================================================= */
+
+.gdbr-ai.is-open
+.gdbr-ai-toggle
+.gdbr-ai-robot {
+
+    animation:
+        robotDockedIdle
+        2.2s ease-in-out infinite;
+}
+
+
+.gdbr-ai.is-open
+.gdbr-ai-toggle:hover
+.gdbr-ai-robot {
+
+    animation:
+        robotDockedWave
+        .8s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   ARM ANIMATION
+========================================================= */
+
+.gdbr-ai:not(.is-open)
+.gdbr-ai-toggle:hover
+.robot-arm-left {
+
+    animation:
+        leftRobotArm
+        .34s ease-in-out infinite alternate;
+}
+
+
+.gdbr-ai:not(.is-open)
+.gdbr-ai-toggle:hover
+.robot-arm-right {
+
+    animation:
+        rightRobotArm
+        .34s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   LIGHT EFFECTS
+========================================================= */
+
+.gdbr-ai-toggle:hover
+.robot-eye {
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 7px #ffffff,
+        0 0 14px #8d83ff,
+        0 0 25px rgba(141, 131, 255, 0.90);
+}
+
+
+.gdbr-ai-toggle:hover
+.robot-chest {
+
+    box-shadow:
+        0 0 10px #7267ff,
+        0 0 22px rgba(114, 103, 255, 0.80);
+}
+
+
+.gdbr-ai-toggle:hover
+.robot-antenna-light {
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 8px #ffffff,
+        0 0 16px #ffd23f,
+        0 0 30px rgba(255, 210, 63, 0.90);
+}
+
+
+.gdbr-ai-toggle:hover
+.ai-orbit-one {
+
+    opacity: 1;
+
+    animation:
+        orbitOne
+        1.35s linear infinite;
+}
+
+
+.gdbr-ai-toggle:hover
+.ai-orbit-two {
+
+    opacity: 1;
+
+    animation:
+        orbitTwo
+        1.9s linear infinite reverse;
+}
+
+
+/* =========================================================
+   ROBOT IDLE
+========================================================= */
+
+@keyframes robotIdle {
+
+    0%,
+    100% {
+        transform:
+            translate3d(0, 0, 0)
+            rotateZ(0deg);
+    }
+
+    50% {
+        transform:
+            translate3d(0, -4px, 0)
+            rotateZ(1.5deg);
+    }
+}
+
+
+/* =========================================================
+   3D ACROBATIC FLIP
+========================================================= */
+
+@keyframes robotAcrobaticFlip {
+
+    0% {
+        transform:
+            perspective(240px)
+            translate3d(0, 0, 0)
+            rotateX(0deg)
+            rotateY(0deg)
+            rotateZ(0deg)
+            scale(1);
+    }
+
+    10% {
+        transform:
+            perspective(240px)
+            translate3d(-6px, 2px, 8px)
+            rotateX(-12deg)
+            rotateY(-8deg)
+            rotateZ(-3deg)
+            scale(.97);
+    }
+
+    23% {
+        transform:
+            perspective(240px)
+            translate3d(-14px, -10px, 18px)
+            rotateX(-68deg)
+            rotateY(-12deg)
+            rotateZ(-6deg)
+            scale(1.03);
+    }
+
+    38% {
+        transform:
+            perspective(240px)
+            translate3d(-18px, -27px, 28px)
+            rotateX(-138deg)
+            rotateY(-9deg)
+            rotateZ(-4deg)
+            scale(1.08);
+    }
+
+    50% {
+        transform:
+            perspective(240px)
+            translate3d(0, -35px, 34px)
+            rotateX(-180deg)
+            rotateY(0deg)
+            rotateZ(0deg)
+            scale(1.11);
+    }
+
+    63% {
+        transform:
+            perspective(240px)
+            translate3d(18px, -26px, 28px)
+            rotateX(-228deg)
+            rotateY(10deg)
+            rotateZ(5deg)
+            scale(1.08);
+    }
+
+    77% {
+        transform:
+            perspective(240px)
+            translate3d(13px, -11px, 18px)
+            rotateX(-292deg)
+            rotateY(12deg)
+            rotateZ(6deg)
+            scale(1.04);
+    }
+
+    89% {
+        transform:
+            perspective(240px)
+            translate3d(5px, 3px, 6px)
+            rotateX(-344deg)
+            rotateY(5deg)
+            rotateZ(2deg)
+            scale(.96);
+    }
+
+    94% {
+        transform:
+            perspective(240px)
+            translate3d(-2px, -4px, 2px)
+            rotateX(-358deg)
+            rotateY(-2deg)
+            rotateZ(-1deg)
+            scale(1.02);
+    }
+
+    100% {
+        transform:
+            perspective(240px)
+            translate3d(0, 0, 0)
+            rotateX(-360deg)
+            rotateY(0deg)
+            rotateZ(0deg)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   DOCKED ROBOT
+========================================================= */
+
+@keyframes robotDockedIdle {
+
+    0%,
+    100% {
+        transform:
+            translate3d(0, 0, 0)
+            rotateZ(0deg);
+    }
+
+    50% {
+        transform:
+            translate3d(0, -4px, 0)
+            rotateZ(2deg);
+    }
+}
+
+
+@keyframes robotDockedWave {
+
+    from {
+        transform:
+            translate3d(0, -2px, 0)
+            rotateZ(-4deg);
+    }
+
+    to {
+        transform:
+            translate3d(0, -6px, 0)
+            rotateZ(4deg);
+    }
+}
+
+
+/* =========================================================
+   ARMS
+========================================================= */
+
+@keyframes leftRobotArm {
+
+    from {
+        transform:
+            rotate(18deg);
+    }
+
+    to {
+        transform:
+            rotate(74deg);
+    }
+}
+
+
+@keyframes rightRobotArm {
+
+    from {
+        transform:
+            rotate(-18deg);
+    }
+
+    to {
+        transform:
+            rotate(-74deg);
+    }
+}
+
+
+/* =========================================================
+   BLINK
+========================================================= */
+
+@keyframes robotBlink {
+
+    0%,
+    44%,
+    48%,
+    100% {
+        transform:
+            scaleY(1);
+    }
+
+    46% {
+        transform:
+            scaleY(.1);
+    }
+}
+
+
+/* =========================================================
+   ANTENNA
+========================================================= */
+
+@keyframes antennaPulse {
+
+    0%,
+    100% {
+        transform:
+            translateX(-50%)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translateX(-50%)
+            scale(1.35);
+    }
+}
+
+
+/* =========================================================
+   GLOW SPIN
+========================================================= */
+
+@keyframes aiGlowSpin {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ORBITS
+========================================================= */
+
+@keyframes orbitOne {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            rotate(180deg)
+            scale(1.08);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg)
+            scale(1);
+    }
+}
+
+
+@keyframes orbitTwo {
+
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   CHAT PANEL
+========================================================= */
+
+.gdbr-ai-panel {
+    position: absolute;
+
+    right: 0;
+    bottom: 92px;
+
+    width: 380px;
+    height: 520px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 20px;
+
+    background:
+        rgba(11, 18, 32, 0.985);
+
+    box-shadow:
+        0 28px 75px rgba(0, 0, 0, 0.55);
+
+    backdrop-filter:
+        blur(18px);
+
+    transform-origin:
+        bottom right;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform:
+        translate3d(24px, 18px, 0)
+        scale(.94);
+
+    transition:
+        opacity .28s ease,
+        visibility .28s ease,
+        transform .42s cubic-bezier(.22, 1, .36, 1);
+}
+
+
+.gdbr-ai-panel.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translate3d(0, 0, 0)
+        scale(1);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.gdbr-ai-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding:
+        17px 18px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.06);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(114, 103, 255, 0.16),
+            rgba(88, 101, 242, 0.05)
+        );
+}
+
+
+.gdbr-ai-title {
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.gdbr-ai-subtitle {
+    margin-top: 3px;
+
+    color: #7f8998;
+
+    font-size: 10px;
+}
+
+
+.gdbr-ai-close {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #8f98a8;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        color .15s ease;
+}
+
+
+.gdbr-ai-close:hover {
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.gdbr-ai-messages {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 11px;
+
+    overflow-y: auto;
+
+    padding: 16px;
+}
+
+
+.gdbr-ai-message {
+    max-width: 85%;
+
+    padding:
+        11px 13px;
+
+    border-radius: 13px;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+    white-space: pre-wrap;
+}
+
+
+.gdbr-ai-message.assistant {
+    align-self: flex-start;
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color: #dbe3ee;
+}
+
+
+.gdbr-ai-message.user {
+    align-self: flex-end;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6257ee,
+            #4f46e5
+        );
+
+    color: #ffffff;
+}
+
+
+.gdbr-ai-typing {
+    opacity: .72;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.gdbr-ai-form {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 8px;
+
+    padding: 12px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.gdbr-ai-input {
+    flex: 1;
+
+    min-width: 0;
+    min-height: 43px;
+    max-height: 100px;
+
+    resize: none;
+
+    padding:
+        11px 12px;
+
+    border:
+        1px solid rgba(114, 103, 255, 0.35);
+
+    border-radius: 11px;
+
+    outline: none;
+
+    background: #070c15;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+
+.gdbr-ai-input::placeholder {
+    color: #687385;
+}
+
+
+.gdbr-ai-input:focus {
+    border-color:
+        rgba(114, 103, 255, 0.85);
+
+    box-shadow:
+        0 0 0 3px rgba(114, 103, 255, 0.10);
+}
+
+
+/* =========================================================
+   SEND BUTTON
+========================================================= */
+
+.gdbr-ai-send {
+    min-width: 62px;
+    height: 43px;
+
+    padding:
+        0 14px;
+
+    border: none;
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7267ff,
+            #4f46e5
+        );
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
+
+
+.gdbr-ai-send:hover {
+    transform:
+        translateY(-1px);
+
+    filter:
+        brightness(1.10);
+}
+
+
+.gdbr-ai-send:disabled {
+    opacity: .55;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .gdbr-ai {
+        right: 14px;
+        bottom: 14px;
+
+        width: 68px;
+        height: 68px;
+    }
+
+
+    .gdbr-ai-toggle {
+        width: 68px;
+        height: 68px;
+    }
+
+
+    .gdbr-ai.is-open
+    .gdbr-ai-toggle,
+    .gdbr-ai.is-open
+    .gdbr-ai-toggle:hover {
+
+        transform:
+            translate3d(
+                calc(-100vw + 110px),
+                -6px,
+                0
+            );
+    }
+
+
+    .gdbr-ai-panel {
+        width:
+            calc(100vw - 28px);
+
+        height: 70vh;
+
+        right: 0;
+        bottom: 82px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .gdbr-ai-robot,
+    .robot-antenna-light,
+    .robot-eye,
+    .ai-orbit {
+        animation: none !important;
+    }
+
+
+    .gdbr-ai-toggle,
+    .gdbr-ai-panel {
+        transition-duration:
+            .01ms !important;
+    }
+
+}

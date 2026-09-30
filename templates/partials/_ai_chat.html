@@ -1,0 +1,156 @@
+<div class="gdbr-ai">
+
+    <!-- =====================================================
+         SINGLE AI ROBOT BUTTON
+    ====================================================== -->
+
+    <button
+        type="button"
+        class="gdbr-ai-toggle"
+        id="gdbr-ai-toggle"
+        aria-label="Open GDBR Assistant"
+          
+    >
+
+        <span class="ai-orbit ai-orbit-one"></span>
+        <span class="ai-orbit ai-orbit-two"></span>
+
+        <span class="gdbr-ai-robot">
+
+            <!-- ANTENNA -->
+            <span class="robot-antenna">
+                <span class="robot-antenna-light"></span>
+            </span>
+
+
+            <!-- HEAD -->
+            <span class="robot-head">
+
+                <span class="robot-ear robot-ear-left"></span>
+                <span class="robot-ear robot-ear-right"></span>
+
+                <span class="robot-face">
+
+                    <span class="robot-eye robot-eye-left"></span>
+                    <span class="robot-eye robot-eye-right"></span>
+
+                    <span class="robot-mouth"></span>
+
+                </span>
+
+            </span>
+
+
+            <!-- BODY -->
+            <span class="robot-body">
+
+                <span class="robot-arm robot-arm-left"></span>
+                <span class="robot-arm robot-arm-right"></span>
+
+                <span class="robot-chest">
+                    <span class="robot-chest-light"></span>
+                </span>
+
+                <span class="robot-leg robot-leg-left"></span>
+                <span class="robot-leg robot-leg-right"></span>
+
+            </span>
+
+        </span>
+
+    </button>
+
+
+
+    <!-- =====================================================
+         CHAT PANEL
+    ====================================================== -->
+
+    <div
+        class="gdbr-ai-panel"
+        id="gdbr-ai-panel"
+    >
+
+        <div class="gdbr-ai-header">
+
+            <div>
+
+                <div class="gdbr-ai-title">
+                    GDBR Assistant
+                </div>
+
+                <div class="gdbr-ai-subtitle">
+                    Ask me about PC games
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="gdbr-ai-close"
+                id="gdbr-ai-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
+
+        <div
+            class="gdbr-ai-messages"
+            id="gdbr-ai-messages"
+        >
+
+            <div class="gdbr-ai-message assistant">
+                Hi! Ask me anything about PC games.
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <form
+            class="gdbr-ai-form"
+            id="gdbr-ai-form"
+            action="{% url 'ai_chat' %}"
+            method="POST"
+        >
+
+            {% csrf_token %}
+
+
+            <textarea
+                id="gdbr-ai-input"
+                class="gdbr-ai-input"
+                maxlength="1000"
+                rows="1"
+                placeholder="Ask about PC games..."
+                autocomplete="off"
+                required
+            ></textarea>
+
+
+            <button
+                type="submit"
+                class="gdbr-ai-send"
+                id="gdbr-ai-send"
+            >
+                Send
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

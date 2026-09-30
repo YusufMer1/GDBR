@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block css_files %}
+
+<style>
+
+    body {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgba(109, 40, 217, .14),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at bottom right,
+                rgba(13, 110, 253, .18),
+                transparent 28%
+            ),
+            #020617;
+
+        color: #f8f9fa;
+    }
+
+
+    .auth-page {
+        min-height: calc(100vh - 80px);
+    }
+
+
+    .auth-card {
+        width: min(100%, 500px);
+
+        background:
+            rgba(15, 23, 42, .95);
+
+        border:
+            1px solid rgba(255,255,255,.08);
+
+        box-shadow:
+            0 28px 80px
+            rgba(15,23,42,.35);
+    }
+
+
+    .auth-card-header {
+        background:
+            linear-gradient(
+                135deg,
+                #7c3aed 0%,
+                #0d6efd 100%
+            );
+    }
+
+
+    .auth-card-header h2 {
+        margin-bottom: .25rem;
+
+        font-weight: 800;
+    }
+
+
+    .auth-card-label {
+        color: #e2e8f0;
+
+        font-size: .9rem;
+
+        margin-bottom: .45rem;
+    }
+
+
+    .auth-card .form-control {
+        background:
+            rgba(255,255,255,.08);
+
+        border:
+            1px solid rgba(255,255,255,.12);
+
+        color: #f8f9fa;
+    }
+
+
+    .auth-card .form-control::placeholder {
+        color:
+            rgba(226,232,240,.45);
+    }
+
+
+    .auth-card .form-control:focus {
+        border-color:
+            rgba(109, 40, 217,.75);
+
+        box-shadow:
+            0 0 0 .2rem
+            rgba(109,40,217,.12);
+
+        background:
+            rgba(255,255,255,.10);
+
+        color: #fff;
+    }
+
+
+    .auth-card .btn-primary {
+        background: #7c3aed;
+
+        border-color: #7c3aed;
+
+        font-weight: 700;
+    }
+
+
+    .auth-card .btn-primary:hover {
+        background: #6d28d9;
+
+        border-color: #6d28d9;
+    }
+
+
+    .auth-footer {
+        font-size: .95rem;
+
+        color:
+            rgba(226,232,240,.75);
+    }
+
+
+    .auth-footer a {
+        color: #f8f9fa;
+
+        text-decoration: underline;
+    }
+
+
+    .auth-footer a:hover {
+        color: #c7d2fe;
+    }
+
+
+    .gmail-info {
+        margin-top: 7px;
+
+        color:
+            rgba(226,232,240,.55);
+
+        font-size: 12px;
+
+        line-height: 1.5;
+    }
+
+
+    .gmail-info strong {
+        color: #c7d2fe;
+    }
+
+
+    .verification-info {
+        margin-bottom: 22px;
+
+        padding: 12px 14px;
+
+        border-radius: 10px;
+
+        background:
+            rgba(59, 130, 246, .08);
+
+        border:
+            1px solid rgba(59, 130, 246, .18);
+
+        color: #bfdbfe;
+
+        font-size: 13px;
+
+        line-height: 1.55;
+    }
+
+
+    .verification-info span {
+        margin-right: 5px;
+    }
+
+
+    .auth-message {
+        margin-bottom: 18px;
+
+        padding: 12px 14px;
+
+        border-radius: 10px;
+
+        font-size: 13px;
+
+        font-weight: 600;
+    }
+
+
+    .auth-message.error {
+        color: #fecaca;
+
+        background:
+            rgba(239, 68, 68, .10);
+
+        border:
+            1px solid rgba(239, 68, 68, .20);
+    }
+
+
+    .auth-message.success {
+        color: #bbf7d0;
+
+        background:
+            rgba(34, 197, 94, .10);
+
+        border:
+            1px solid rgba(34, 197, 94, .20);
+    }
+
+
+    .auth-message.info {
+        color: #bfdbfe;
+
+        background:
+            rgba(59, 130, 246, .10);
+
+        border:
+            1px solid rgba(59, 130, 246, .20);
+    }
+
+
+    @media (max-width: 560px) {
+
+        .auth-card {
+            width: 100%;
+        }
+
+
+        .auth-card-header {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block title %}
+    Register | GDBR
+{% endblock %}
+
+
+{% block content %}
+
+<div
+    class="container auth-page
+           d-flex align-items-center
+           justify-content-center py-5"
+>
+
+    <div class="auth-card rounded-4 overflow-hidden">
+
+
+        <!-- HEADER -->
+
+        <div class="auth-card-header text-center px-5 py-4">
+
+            <h2>
+                Create Account
+            </h2>
+
+            <p class="mb-0 text-white-50">
+                Start building your game libraries today.
+            </p>
+
+        </div>
+
+
+
+        <!-- BODY -->
+
+        <div class="p-4">
+
+
+            <!-- EMAIL VERIFICATION INFO -->
+
+            <div class="verification-info">
+
+                <span>✉️</span>
+
+                You will receive a
+                <strong>6-digit verification code</strong>
+                after registration.
+
+                Your account will only be created
+                after your Gmail address is verified.
+
+            </div>
+
+
+
+            <!-- DJANGO MESSAGES -->
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div
+                        class="auth-message {{ message.tags }}"
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+
+            <form
+                id="register-form"
+                action="{% url 'register' %}"
+                method="POST"
+                novalidate
+            >
+
+                {% csrf_token %}
+
+
+
+                <!-- USERNAME -->
+
+                <div class="mb-4">
+
+                    <label
+                        class="form-label auth-card-label"
+                        for="username"
+                    >
+                        Username
+                    </label>
+
+
+                    <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        class="form-control"
+
+                        placeholder="Choose a username"
+
+                        maxlength="150"
+
+                        required
+
+                        autocomplete="username"
+                    >
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="mb-4">
+
+                    <label
+                        class="form-label auth-card-label"
+                        for="email"
+                    >
+                        Gmail Address
+                    </label>
+
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        class="form-control"
+
+                        placeholder="yourname@gmail.com"
+
+                        required
+
+                        autocomplete="email"
+                    >
+
+
+                    <div class="gmail-info">
+
+                        Only
+                        <strong>@gmail.com</strong>
+                        addresses are accepted.
+
+                        You must have access to this email
+                        to complete registration.
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="mb-4">
+
+                    <label
+                        class="form-label auth-card-label"
+                        for="password1"
+                    >
+                        Password
+                    </label>
+
+
+                    <input
+                        id="password1"
+                        name="password1"
+                        type="password"
+                        class="form-control"
+
+                        placeholder="Create a password"
+
+                        minlength="8"
+
+                        required
+
+                        autocomplete="new-password"
+                    >
+
+                </div>
+
+
+
+                <!-- PASSWORD AGAIN -->
+
+                <div class="mb-4">
+
+                    <label
+                        class="form-label auth-card-label"
+                        for="password2"
+                    >
+                        Confirm Password
+                    </label>
+
+
+                    <input
+                        id="password2"
+                        name="password2"
+                        type="password"
+                        class="form-control"
+
+                        placeholder="Repeat your password"
+
+                        minlength="8"
+
+                        required
+
+                        autocomplete="new-password"
+                    >
+
+                </div>
+
+
+
+                <!-- BUTTON -->
+
+                <div class="d-grid mb-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg"
+                        id="register-submit"
+                    >
+                        Continue
+                    </button>
+
+                </div>
+
+
+
+                <!-- LOGIN -->
+
+                <p class="auth-footer text-center mb-0">
+
+                    Already have an account?
+
+                    <a href="{% url 'login' %}">
+                        Sign in
+                    </a>
+
+                </p>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const registerForm =
+        document.getElementById("register-form");
+
+    const registerButton =
+        document.getElementById("register-submit");
+
+
+    if (registerForm && registerButton) {
+
+        registerForm.addEventListener(
+            "submit",
+            function () {
+
+                registerButton.disabled = true;
+
+                registerButton.textContent =
+                    "Sending code...";
+
+            }
+        );
+
+    }
+
+</script>
+
+{% endblock %}

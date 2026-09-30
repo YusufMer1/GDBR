@@ -1,0 +1,338 @@
+.favorite-games-section {
+    max-width: 1550px;
+    margin: 70px auto;
+    padding: 0 35px;
+}
+
+.favorite-games-header {
+    margin-bottom: 25px;
+}
+
+.favorite-games-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.favorite-games-title .yellow-line {
+    width: 5px;
+    height: 34px;
+    background: #ffc107;
+    border-radius: 10px;
+}
+
+.favorite-games-title h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.favorite-games-title p {
+    margin: 4px 0 0;
+    color: #9a9da6;
+    font-size: 15px;
+}
+
+
+/* =====================================
+   SLIDER
+===================================== */
+
+.favorite-slider {
+    position: relative;
+    width: 100%;
+}
+
+
+/* YATAY LİSTE */
+
+.favorite-games-row {
+    display: flex;
+    gap: 18px;
+
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+
+    padding: 10px 0 20px;
+
+    scrollbar-width: none;
+}
+
+.favorite-games-row::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =====================================
+   SAĞ - SOL OKLAR
+===================================== */
+
+.favorite-slider-arrow {
+    position: absolute;
+
+    top: 45%;
+    transform: translateY(-50%);
+
+    width: 48px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: rgba(15, 16, 20, 0.90);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+
+    color: #fff;
+
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1;
+
+    cursor: pointer;
+
+    z-index: 10;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+/* SOL OK */
+
+.favorite-prev {
+    left: 10px;
+}
+
+
+/* SAĞ OK */
+
+.favorite-next {
+    right: 10px;
+}
+
+
+/* OK HOVER */
+
+.favorite-slider-arrow:hover {
+    background: #ffc107;
+    color: #111;
+
+    transform:
+        translateY(-50%)
+        scale(1.05);
+}
+
+.favorite-slider-arrow:active {
+    transform:
+        translateY(-50%)
+        scale(0.95);
+}
+
+
+/* =====================================
+   KART
+===================================== */
+
+.favorite-game-card {
+    flex: 0 0 240px;
+
+    background: #1c1e22;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, .06);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.favorite-game-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, .35);
+}
+
+
+/* =====================================
+   IMAGE
+===================================== */
+
+.favorite-game-image {
+    height: 340px;
+
+    overflow: hidden;
+}
+
+.favorite-game-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform .3s ease;
+}
+
+.favorite-game-card:hover .favorite-game-image img {
+    transform: scale(1.04);
+}
+
+
+/* =====================================
+   INFO
+===================================== */
+
+.favorite-game-info {
+    padding: 14px 14px 16px;
+}
+
+.favorite-rating {
+    margin-bottom: 10px;
+
+    color: #d7d7db;
+
+    font-size: 16px;
+}
+
+.favorite-rating span {
+    color: #ffc107;
+}
+
+.favorite-game-info h3 {
+    min-height: 48px;
+
+    margin: 0 0 15px;
+
+    color: #fff;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+/* =====================================
+   VIEW DETAILS BUTTON
+===================================== */
+
+.favorite-details {
+    display: block;
+
+    padding: 10px;
+
+    text-align: center;
+
+    background: #2a2c31;
+
+    color: #5ca3ff;
+
+    border-radius: 999px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.favorite-details:hover {
+    background: #34363c;
+
+    color: #fff;
+}
+
+
+/* =====================================
+   FAN GAMES BAŞLIK
+===================================== */
+
+.favorite-title-link {
+    display: inline-block;
+
+    text-decoration: none;
+
+    color: inherit;
+}
+
+.favorite-title-link h2 {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 0;
+
+    color: #fff;
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.favorite-title-arrow {
+    display: inline-flex;
+    align-items: center;
+
+    color: #fff;
+
+    font-size: 25px;
+    font-weight: 800;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Başlığın üstüne gelince ok sarı */
+
+.favorite-title-link:hover .favorite-title-arrow {
+    color: #ffc107;
+
+    transform: translateX(4px);
+}
+
+.favorite-title-link:hover h2 {
+    color: #fff;
+}
+
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 768px) {
+
+    .favorite-games-section {
+        padding: 0 18px;
+    }
+
+    .favorite-game-card {
+        flex: 0 0 210px;
+    }
+
+    .favorite-game-image {
+        height: 300px;
+    }
+
+    .favorite-slider-arrow {
+        width: 42px;
+        height: 62px;
+
+        font-size: 36px;
+    }
+
+}

@@ -1,0 +1,111 @@
+<section class="favorite-games-section">
+
+    <div class="favorite-games-header">
+
+        <div class="favorite-games-title">
+
+            <span class="yellow-line"></span>
+
+            <div>
+                <a href="#" class="favorite-title-link">
+                    <h2>
+                        Fan Games
+                        <span class="favorite-title-arrow">❯</span>
+                    </h2>
+                </a>
+
+                <p>Games that have fans</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SLIDER -->
+    <div class="favorite-slider">
+
+        <!-- SOL OK -->
+        <button
+            type="button"
+            class="favorite-slider-arrow favorite-prev"
+            id="favorite-prev"
+            aria-label="Previous games"
+        >
+            ‹
+        </button>
+
+
+        <!-- OYUNLAR -->
+        <div class="favorite-games-row" id="favorite-games-row">
+
+            {% for game in favouritegames %}
+
+                <div class="favorite-game-card">
+
+                    <div class="favorite-game-image">
+
+                        {% if game.cover_image %}
+
+                            <img
+                                src="{{ game.cover_image.url }}"
+                                alt="{{ game.title }}"
+                            >
+
+                        {% else %}
+
+                            <div class="favorite-no-image">
+                                No Image
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="favorite-game-info">
+
+                        {% if game.rating %}
+
+                            <div class="favorite-rating">
+                                <span>★</span>
+                                {{ game.rating|floatformat:1 }}
+                            </div>
+
+                        {% endif %}
+
+
+                        <h3>
+                            {{ game.title }}
+                        </h3>
+
+
+                        <a
+                            href="{% url 'game_detail' game.slug %}"
+                            class="favorite-details"
+                        >
+                            View Details
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- SAĞ OK -->
+        <button
+            type="button"
+            class="favorite-slider-arrow favorite-next"
+            id="favorite-next"
+            aria-label="Next games"
+        >
+            ›
+        </button>
+
+    </div>
+
+</section>

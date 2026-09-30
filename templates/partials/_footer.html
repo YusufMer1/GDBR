@@ -1,0 +1,112 @@
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <!-- BRAND -->
+        <div class="footer-brand">
+
+            <a href="{% url 'home' %}" class="footer-logo">
+                <span class="footer-logo-box">G</span>
+                <span class="footer-logo-text">DBR</span>
+            </a>
+
+            <p>
+                Discover games, explore iconic series,
+                track your favorites and find your next adventure.
+            </p>
+
+        </div>
+
+
+        <!-- LINKS -->
+        <div class="footer-links">
+
+            <div class="footer-column">
+
+                <h4>
+                    Explore
+                </h4>
+
+                <a href="{% url 'home' %}">
+                    Home
+                </a>
+
+                <a href="{% url 'game_of_the_year' %}">
+                    Game of the Year
+                </a>
+
+                <a href="{% url 'games_2026' %}">
+                    2026 Games
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Account
+                </h4>
+
+                {% if request.user.is_authenticated %}
+
+                    <a href="{% url 'my_libraries' %}">
+                        My libraries
+                    </a>
+
+                    <a href="{% url 'profile' %}">
+                        Profile
+                    </a>
+
+                    
+
+                {% else %}
+
+                    <a href="{% url 'login' %}">
+                        Login
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    GDBR
+                </h4>
+
+                <a
+                    class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                    href="{% url 'about' %}"
+                >
+                    About
+                </a>
+
+                <a href="{% url 'contact' %}">
+                    Contact
+                </a>
+
+                
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © {% now "Y" %} GDBR. All rights reserved.
+        </p>
+
+        <span>
+            Game Database & Reviews
+        </span>
+
+    </div>
+
+</footer>

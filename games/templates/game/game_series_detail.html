@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+    {{ series.name }} | Game Hub
+{% endblock %}
+
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'game/css/game_series_detail.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="series-detail-section">
+
+
+    <!-- =========================
+         SERİ BAŞLIĞI
+    ========================== -->
+
+    <div class="series-detail-header">
+
+        <span class="yellow-line"></span>
+
+        <div>
+
+            <span class="series-label">
+                GAME SERIES
+            </span>
+
+            <h1>
+                {{ series.name }}
+            </h1>
+
+            {% if series.description %}
+
+                <p>
+                    {{ series.description }}
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         PLAY ORDER BAŞLIK
+    ========================== -->
+
+    <div class="play-order-header">
+
+        <h2>
+            Play Order
+        </h2>
+
+        <p>
+            Recommended order to play the series
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         OYUNLAR
+    ========================== -->
+
+    <div class="series-games-list">
+
+        {% for entry in entries %}
+
+            <div class="series-game">
+
+
+                <!-- SIRA -->
+
+                <span class="series-order">
+                    {{ entry.play_order }}
+                </span>
+
+
+
+                <!-- KAPAK -->
+
+                {% if entry.game.cover_image %}
+
+                    <img
+                        src="{{ entry.game.cover_image.url }}"
+                        alt="{{ entry.game.title }}"
+                    >
+
+                {% endif %}
+
+
+
+                <!-- OYUN BİLGİLERİ -->
+
+                <div class="series-game-info">
+
+                    <h3>
+                        {{ entry.game.title }}
+                    </h3>
+
+
+                    {% if entry.game.release_date %}
+
+                        <p>
+                            {{ entry.game.release_date|date:"Y" }}
+                        </p>
+
+                    {% endif %}
+
+
+                    <a href="{% url 'game_detail' entry.game.slug %}">
+                        View Game →
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                No games have been added to this series yet.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+</section>
+
+{% endblock %}

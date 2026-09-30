@@ -1,0 +1,673 @@
+/* =========================================
+   TRENDING HEADER
+========================================= */
+
+.trending-header {
+    width: calc(100% - 10px);
+    max-width: 1600px;
+
+    margin: 35px auto 0;
+
+    padding: 24px 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    /* Slider'dan biraz daha açık */
+    background:
+        linear-gradient(
+            110deg,
+            #111111 0%,
+            #151515 50%,
+            #181818 100%
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    /* Sadece üst köşeler */
+    border-radius: 22px 22px 0 0;
+
+    box-shadow:
+        0 -5px 30px rgba(0, 0, 0, 0.08);
+}
+.trending-header {
+    position: relative;
+}
+
+.trending-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 38px;
+    bottom: 0;
+
+    width: 75px;
+    height: 2px;
+
+    background: #ffc107;
+
+    border-radius: 10px;
+
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.35);
+}
+
+
+/* =========================================
+   HEADER SOL TARAF
+========================================= */
+
+.trending-header > div:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* TRENDING NOW */
+
+.trending-label {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    margin-bottom: 8px;
+
+    padding: 5px 11px;
+
+    background: rgba(255, 193, 7, 0.12);
+
+    border: 1px solid rgba(255, 193, 7, 0.13);
+
+    border-radius: 999px;
+
+    color: #ffc107;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+/* Popular Games */
+
+.trending-header h2 {
+    margin: 0 0 5px;
+
+    color: #fff;
+
+    font-size: 30px;
+    font-weight: 900;
+
+    letter-spacing: -0.6px;
+}
+
+
+/* Açıklama */
+
+.trending-header p {
+    margin: 0;
+
+    color: #8d8d93;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   COUNTER
+========================================= */
+
+.trending-counter {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 11px 15px;
+
+    background: #1d1d1f;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 12px;
+
+    color: #777d87;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+#trending-current {
+    color: #ffc107;
+
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .trending-header {
+        margin: 25px 15px 20px;
+
+        padding: 20px;
+
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 18px;
+    }
+
+    .trending-header h2 {
+        font-size: 25px;
+    }
+
+    .trending-counter {
+        align-self: flex-end;
+    }
+
+}
+
+/* =========================================
+   TRENDING SLIDER
+========================================= */
+
+.trending-section {
+    width: 100%;
+
+    padding: 35px 35px 55px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #202329 0%,
+            #1d2025 100%
+        );
+
+    box-sizing: border-box;
+}
+
+
+/* Slider ana kutusu */
+
+.trending-slider {
+    position: relative;
+
+    width: calc(100% - 10px);
+    max-width: 1600px;
+    height: 450px;
+
+    margin: 0 auto;
+
+    background: #070707;
+
+    /* Header ile birleşsin */
+    border-radius: 0 0 22px 22px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 55px rgba(0, 0, 0, 0.22);
+}
+
+
+/* Slide alanı */
+
+.trending-slides {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+}
+
+
+/* Bütün oyunları gizle */
+
+.trending-slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    grid-template-columns: 55% 45%;
+
+    opacity: 0;
+}
+
+
+/* Sadece aktif oyunu göster */
+
+.trending-slide.active {
+    display: grid;
+
+    opacity: 1;
+
+    animation: trendingFade 0.45s ease;
+}
+
+
+@keyframes trendingFade {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* =========================================
+   SOL TARAF - KAPAK
+========================================= */
+
+.trending-image {
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #181818 0%,
+            #090909 75%
+        );
+}
+
+
+.trending-image img {
+    height: 91%;
+    width: auto;
+
+    max-width: 90%;
+
+    object-fit: contain;
+
+    border-radius: 4px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+
+.trending-no-image {
+    width: 250px;
+    height: 340px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #1d1d1d;
+
+    color: #777;
+
+    border-radius: 12px;
+}
+
+
+/* =========================================
+   SAĞ TARAF - BİLGİ
+========================================= */
+
+.trending-info {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 50px 75px 50px 45px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #101010 0%,
+            #090909 100%
+        );
+}
+
+
+/* Sıralama */
+
+.trending-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 40px;
+
+    margin-bottom: 20px;
+
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    background: #242424;
+
+    color: #d4d4d4;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+/* Oyun adı */
+
+.trending-info h2 {
+    max-width: 600px;
+
+    margin: 0 0 24px;
+
+    color: #ffffff;
+
+    font-size: clamp(30px, 3vw, 46px);
+    font-weight: 900;
+
+    line-height: 1.08;
+
+    letter-spacing: -1px;
+}
+
+
+/* Rating */
+
+.trending-rating {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 12px;
+
+    color: #aaa;
+
+    font-size: 14px;
+}
+
+
+.trending-rating .star {
+    color: #ffc107;
+
+    font-size: 20px;
+}
+
+
+.trending-rating strong {
+    color: #fff;
+
+    font-size: 18px;
+}
+
+
+/* Yıl */
+
+.trending-release {
+    margin: 0 0 26px;
+
+    color: #888;
+
+    font-size: 14px;
+}
+
+
+/* Details butonu */
+
+.trending-details-btn {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px 23px;
+
+    border-radius: 999px;
+
+    background: #ffffff;
+
+    color: #111111 !important;
+
+    text-decoration: none !important;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.trending-details-btn:hover {
+    background: #ffc107;
+
+    transform: translateY(-2px);
+}
+
+
+.trending-details-btn span {
+    transition: transform 0.25s ease;
+}
+
+
+.trending-details-btn:hover span {
+    transform: translateX(5px);
+}
+
+
+/* =========================================
+   OKLAR
+========================================= */
+
+.trending-arrow {
+    position: absolute;
+    z-index: 20;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    border-radius: 50%;
+
+    background: rgba(10, 10, 10, 0.65);
+
+    backdrop-filter: blur(10px);
+
+    color: white;
+
+    font-size: 26px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.trending-prev {
+    left: 20px;
+}
+
+
+.trending-next {
+    right: 20px;
+}
+
+
+.trending-arrow:hover {
+    background: #ffc107;
+
+    border-color: #ffc107;
+
+    color: #111;
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+}
+
+
+/* =========================================
+   DOTS
+========================================= */
+
+.trending-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 16px;
+}
+
+
+.trending-dot {
+    width: 8px;
+    height: 8px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: #c7c7c7;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+
+.trending-dot.active {
+    width: 28px;
+
+    border-radius: 10px;
+
+    background: #242424;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 900px) {
+
+    .trending-slider {
+        height: 420px;
+
+        width: calc(100% - 30px);
+    }
+
+    .trending-slide,
+    .trending-slide.active {
+        grid-template-columns: 48% 52%;
+    }
+
+    .trending-info {
+        padding: 35px;
+    }
+
+    .trending-info h2 {
+        font-size: 30px;
+    }
+
+}
+
+
+/* =========================================
+   TELEFON
+========================================= */
+
+@media (max-width: 650px) {
+
+    .trending-slider {
+        height: 650px;
+    }
+
+    .trending-slide.active {
+        display: flex;
+
+        flex-direction: column;
+    }
+
+    .trending-image {
+        height: 58%;
+    }
+
+    .trending-image img {
+        height: 92%;
+    }
+
+    .trending-info {
+        height: 42%;
+
+        padding: 25px 60px 25px 25px;
+    }
+
+    .trending-info h2 {
+        margin-bottom: 14px;
+
+        font-size: 25px;
+    }
+
+    .trending-number {
+        margin-bottom: 10px;
+    }
+
+    .trending-release {
+        margin-bottom: 15px;
+    }
+
+    .trending-arrow {
+        width: 42px;
+        height: 42px;
+
+        font-size: 20px;
+    }
+
+    .trending-prev {
+        left: 10px;
+    }
+
+    .trending-next {
+        right: 10px;
+    }
+
+}

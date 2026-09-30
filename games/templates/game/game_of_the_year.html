@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Game of the Year
+{% endblock %}
+
+{% block content %}
+    <main class="container py-5">
+        <h1 class="mb-4">Game of the Year</h1>
+
+        {% if goty_games %}
+            <div class="row g-4">
+                {% for goty in goty_games %}
+                    <article class="col-12">
+                        <div class="card h-100">
+                            <div class="row g-0">
+                                <div class="col-md-3">
+                                    {% if goty.winner.cover_image %}
+                                        <img src="{{ goty.winner.cover_image.url }}" class="img-fluid rounded-start" alt="{{ goty.winner.title }} kapağı">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="card-body">
+                                        <p class="card-text text-muted mb-1">{{ goty.year }}</p>
+                                        <h2 class="card-title h4">{{ goty.winner.title }}</h2>
+                                        <p class="card-text">{{ goty.winner.description }}</p>
+                                        {% if goty.winner.rating is not None %}
+                                            <p class="card-text mb-0">Puan: {{ goty.winner.rating|floatformat:1 }}/100</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Henüz Game of the Year kaydı bulunamadı.</p>
+        {% endif %}
+    </main>
+{% endblock %}

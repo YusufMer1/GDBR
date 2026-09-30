@@ -1,0 +1,1741 @@
+/* =========================================================
+   GDBR - GAME DETAIL
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.game-detail-page {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(114, 103, 255, 0.13),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 40%,
+            rgba(255, 193, 7, 0.025),
+            transparent 26%
+        ),
+        #070c15;
+
+    color: #fff;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.game-hero {
+    position: relative;
+
+    padding: 70px 24px 80px;
+
+    overflow: visible;
+}
+
+
+.game-hero-bg {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 25% 40%,
+            rgba(255, 255, 255, 0.025),
+            transparent 28%
+        );
+}
+
+
+.game-hero .container {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   DETAIL CARD
+========================================================= */
+
+.game-detail-card {
+    display: grid;
+
+    grid-template-columns:
+        340px minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 55px;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 34px;
+
+    border-radius: 24px;
+
+    border:
+        1px solid rgba(255,255,255,.09);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,24,39,.94),
+            rgba(11,18,32,.96)
+        );
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.35);
+
+    backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   COVER
+========================================================= */
+
+.game-cover-area {
+    width: 100%;
+}
+
+
+.game-detail-cover {
+    display: block;
+
+    width: 100%;
+    height: 470px;
+
+    object-fit: cover;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 45px
+        rgba(0,0,0,.46);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+
+.game-detail-cover:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 28px 55px
+        rgba(0,0,0,.58);
+}
+
+
+.game-no-cover {
+    width: 100%;
+    height: 470px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #141c2a,
+            #0b1220
+        );
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    color: #697384;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   GAME INFO
+========================================================= */
+
+.game-info {
+    min-width: 0;
+
+    color: #fff;
+}
+
+
+.game-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    padding: 6px 13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(114,103,255,.10);
+
+    border:
+        1px solid rgba(114,103,255,.20);
+
+    color: #9c96ff;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.game-title {
+    margin:
+        0 0 22px;
+
+    color: #fff;
+
+    font-size:
+        clamp(
+            2.2rem,
+            4vw,
+            4rem
+        );
+
+    font-weight: 950;
+
+    line-height: 1.04;
+
+    letter-spacing: -.04em;
+}
+
+
+/* =========================================================
+   RATING
+========================================================= */
+
+.game-rating {
+    display: inline-flex;
+
+    align-items: baseline;
+
+    gap: 7px;
+
+    margin-bottom: 25px;
+
+    padding: 10px 16px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.055);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+}
+
+
+.rating-star {
+    color: #ffc107;
+
+    font-size: 20px;
+}
+
+
+.rating-number {
+    color: #fff;
+
+    font-size: 22px;
+
+    font-weight: 900;
+}
+
+
+.rating-out-of {
+    color: #717b89;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RELEASE DATE
+========================================================= */
+
+.game-release {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    margin-bottom: 30px;
+
+    padding-left: 15px;
+
+    border-left:
+        3px solid #7267ff;
+}
+
+
+.info-label {
+    color: #717b89;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.2px;
+}
+
+
+.info-value {
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ACTION AREA
+========================================================= */
+
+.game-actions {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    overflow: visible;
+}
+
+
+/* BACK */
+
+.back-button {
+    min-height: 45px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 19px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    background:
+        rgba(255,255,255,.05);
+
+    color: #d8dce5;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        color .2s ease;
+}
+
+
+.back-button:hover {
+    color: #fff;
+
+    background:
+        rgba(255,255,255,.10);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================================
+   LIBRARY DROPDOWN
+========================================================= */
+
+.game-library-dropdown {
+    position: relative;
+
+    min-width: 230px;
+
+    z-index: 100;
+}
+
+
+.game-library-button {
+    width: 100%;
+    min-height: 45px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 14px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6257ee,
+            #4438d8
+        );
+
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 9px 22px
+        rgba(79,70,229,.26);
+
+    transition:
+        transform .2s ease,
+        filter .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.game-library-button:hover {
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(1.08);
+
+    box-shadow:
+        0 13px 28px
+        rgba(79,70,229,.34);
+}
+
+
+.library-plus {
+    font-size: 18px;
+
+    line-height: 1;
+}
+
+
+.game-library-arrow {
+    margin-left: auto;
+
+    font-size: 11px;
+
+    transition:
+        transform .2s ease;
+}
+
+
+.game-library-dropdown.open
+.game-library-arrow {
+    transform:
+        rotate(180deg);
+}
+
+
+/* =========================================================
+   LIBRARY MENU
+========================================================= */
+
+.game-library-menu {
+    position: absolute;
+
+    left: 0;
+    top: calc(100% + 9px);
+
+    z-index: 1000;
+
+    width: 100%;
+
+    min-width: 270px;
+
+    max-height: 330px;
+
+    padding: 9px;
+
+    overflow-y: auto;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    background: #0b1220;
+
+    box-shadow:
+        0 22px 55px
+        rgba(0,0,0,.55);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(-7px);
+
+    transition:
+        opacity .18s ease,
+        visibility .18s ease,
+        transform .18s ease;
+}
+
+
+.game-library-dropdown.open
+.game-library-menu {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0);
+}
+
+
+/* SCROLLBAR */
+
+.game-library-menu {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #353b48 transparent;
+}
+
+
+.game-library-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.game-library-menu::-webkit-scrollbar-thumb {
+    background: #353b48;
+
+    border-radius: 20px;
+}
+
+
+/* =========================================================
+   LIBRARY TITLE
+========================================================= */
+
+.game-library-menu-title {
+    padding:
+        7px 9px 9px;
+
+    color: #687385;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.4px;
+}
+
+
+/* =========================================================
+   LIBRARY ITEM
+========================================================= */
+
+.game-library-menu form {
+    margin: 0;
+}
+
+
+.game-library-item {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #fff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease;
+}
+
+
+.game-library-item:hover {
+    background:
+        rgba(114,103,255,.11);
+}
+
+
+.game-library-item-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    font-size: 13px;
+}
+
+
+.game-library-item-info {
+    min-width: 0;
+
+    display: flex;
+
+    flex: 1;
+
+    flex-direction: column;
+}
+
+
+.game-library-item-info strong {
+    overflow: hidden;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.game-library-item-info small {
+    margin-top: 3px;
+
+    color: #6f7988;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CREATE LIBRARY
+========================================================= */
+
+.game-library-divider {
+    height: 1px;
+
+    margin: 7px 2px;
+
+    background:
+        rgba(255,255,255,.07);
+}
+
+
+.game-library-create {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    color: #928bff;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    text-decoration: none;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+
+.game-library-create:hover {
+    color: #fff;
+
+    background:
+        rgba(114,103,255,.11);
+}
+
+
+.game-library-empty {
+    padding: 12px 10px;
+
+    color: #818b99;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   LOGIN / UNAVAILABLE
+========================================================= */
+
+.library-login-button {
+    min-height: 45px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 18px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6257ee,
+            #4438d8
+        );
+
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-decoration: none;
+}
+
+
+.library-login-button:hover {
+    color: #fff;
+
+    filter:
+        brightness(1.08);
+}
+
+
+.library-unavailable {
+    min-height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 16px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.035);
+
+    color: #697384;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   COMMON CONTENT
+========================================================= */
+
+.game-description-section,
+.comments-section {
+    width: 100%;
+
+    max-width: 1000px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+========================================================= */
+
+.section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 25px;
+}
+
+
+.section-line {
+    width: 5px;
+    height: 31px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #7667ff,
+            #5745ed
+        );
+}
+
+
+.section-title h2 {
+    margin: 0;
+
+    color: #f7f7f9;
+
+    font-size: 25px;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   GAME MEDIA
+========================================================= */
+
+.game-media-section {
+    width: 100%;
+
+    padding:
+        55px 24px 50px;
+
+    background: transparent;
+}
+
+
+.game-media-section .container {
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+}
+
+
+.media-section-block {
+    width: 100%;
+
+    max-width: 1000px;
+
+    margin:
+        0 auto 65px;
+}
+
+
+/* =========================================================
+   VIDEO
+========================================================= */
+
+.game-video-wrapper {
+    width: 100%;
+
+    max-width: 900px;
+
+    aspect-ratio: 16 / 9;
+
+    margin:
+        25px auto 0;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background: #07090d;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0,0,0,.35);
+}
+
+
+.game-video-wrapper iframe {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+}
+
+
+/* =========================================================
+   SCREENSHOT GALLERY
+========================================================= */
+
+.screenshot-gallery {
+    width: 100%;
+}
+
+
+.screenshot-main {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    border:
+        1px solid rgba(255,255,255,.09);
+
+    background: #08090d;
+
+    box-shadow:
+        0 20px 55px
+        rgba(0,0,0,.32);
+}
+
+
+.screenshot-main img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition:
+        opacity .18s ease,
+        transform .3s ease;
+}
+
+
+.screenshot-main:hover img {
+    transform:
+        scale(1.01);
+}
+
+
+/* =========================================================
+   SCREENSHOT THUMBNAILS
+========================================================= */
+
+.screenshot-thumbnails {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    width: 100%;
+
+    margin-top: 14px;
+
+    padding:
+        3px 2px 10px;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #3b3c46 transparent;
+}
+
+
+.screenshot-thumbnails::-webkit-scrollbar {
+    height: 6px;
+}
+
+
+.screenshot-thumbnails::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.screenshot-thumbnails::-webkit-scrollbar-thumb {
+    background: #3b3c46;
+
+    border-radius: 20px;
+}
+
+
+.screenshot-thumb {
+    flex:
+        0 0 145px;
+
+    width: 145px;
+    height: 82px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border:
+        2px solid transparent;
+
+    border-radius: 9px;
+
+    background: #111218;
+
+    cursor: pointer;
+
+    opacity: .55;
+
+    transition:
+        opacity .22s ease,
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+}
+
+
+.screenshot-thumb img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.screenshot-thumb:hover {
+    opacity: .9;
+
+    transform:
+        translateY(-3px);
+}
+
+
+.screenshot-thumb.active {
+    opacity: 1;
+
+    border-color: #6c5cff;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(108,92,255,.18),
+        0 8px 20px
+        rgba(0,0,0,.25);
+}
+
+
+/* =========================================================
+   GAME CONTENT
+========================================================= */
+
+.game-content {
+    padding:
+        20px 24px 90px;
+}
+
+
+.game-content .container {
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.game-description-section {
+    padding:
+        29px 31px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,24,39,.84),
+            rgba(11,18,32,.90)
+        );
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.16);
+}
+
+
+.game-description {
+    margin: 20px 0 0;
+
+    padding:
+        22px 25px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    background:
+        rgba(255,255,255,.035);
+
+    color: #cbd2dc;
+
+    font-size: 15px;
+
+    line-height: 1.85;
+}
+
+
+.empty-text {
+    margin: 20px 0 0;
+
+    padding: 22px;
+
+    border-radius: 13px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    color: #7e8795;
+}
+
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+.comments-section {
+    margin-top: 65px;
+}
+
+
+/* COMMENT FORM */
+
+.comment-form-card {
+    margin-top: 25px;
+    margin-bottom: 30px;
+
+    padding:
+        28px 30px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,24,39,.84),
+            rgba(11,18,32,.90)
+        );
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.16);
+}
+
+
+.comment-form-header h3 {
+    margin:
+        0 0 6px;
+
+    color: #fff;
+
+    font-size: 18px;
+    font-weight: 850;
+}
+
+
+.comment-form-header span {
+    color: #9099a8;
+
+    font-size: 14px;
+}
+
+
+/* TEXTAREA */
+
+.comment-textarea {
+    width: 100%;
+
+    min-height: 120px;
+
+    margin-top: 22px;
+
+    padding:
+        17px 19px;
+
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    outline: none;
+
+    border-radius: 13px;
+
+    border:
+        1px solid rgba(255,255,255,.09);
+
+    background: #080e18;
+
+    color: #f1f5f9;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.comment-textarea::placeholder {
+    color: #596373;
+}
+
+
+.comment-textarea:focus {
+    border-color:
+        rgba(114,103,255,.65);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(114,103,255,.10);
+}
+
+
+/* SUBMIT */
+
+.comment-submit-area {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 18px;
+}
+
+
+.comment-submit {
+    padding:
+        11px 21px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6257ee,
+            #4438d8
+        );
+
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        filter .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.comment-submit:hover {
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(1.08);
+
+    box-shadow:
+        0 9px 22px
+        rgba(79,70,229,.28);
+}
+
+
+/* =========================================================
+   LOGIN COMMENT
+========================================================= */
+
+.login-comment-box {
+    margin-top: 25px;
+    margin-bottom: 30px;
+
+    padding:
+        22px 25px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.03);
+
+    text-align: center;
+}
+
+
+.login-comment-box p {
+    margin: 0;
+
+    color: #858f9e;
+}
+
+
+/* =========================================================
+   COMMENT LIST
+========================================================= */
+
+.comments-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    margin-top: 30px;
+}
+
+
+.comment-card {
+    padding: 23px 24px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.035);
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease;
+}
+
+
+.comment-card:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(114,103,255,.20);
+}
+
+
+.comment-top {
+    margin-bottom: 15px;
+}
+
+
+.comment-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6257ee,
+            #4438d8
+        );
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.comment-user > div:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.comment-user strong {
+    color: #fff;
+
+    font-size: 14px;
+}
+
+
+.comment-user small {
+    color: #717b89;
+
+    font-size: 11px;
+}
+
+
+.comment-content {
+    margin: 0;
+
+    color: #c5ccd6;
+
+    font-size: 14px;
+
+    line-height: 1.75;
+
+    white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   NO COMMENTS
+========================================================= */
+
+.no-comments {
+    padding:
+        55px 25px;
+
+    text-align: center;
+
+    border-radius: 18px;
+
+    border:
+        1px dashed rgba(255,255,255,.10);
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+
+.no-comments-icon {
+    margin-bottom: 12px;
+
+    font-size: 32px;
+}
+
+
+.no-comments h3 {
+    margin:
+        0 0 8px;
+
+    color: #fff;
+
+    font-size: 18px;
+
+    font-weight: 850;
+}
+
+
+.no-comments p {
+    margin: 0;
+
+    color: #7e8795;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .game-detail-card {
+        grid-template-columns:
+            280px minmax(0,1fr);
+
+        gap: 35px;
+
+        padding: 25px;
+    }
+
+
+    .game-detail-cover,
+    .game-no-cover {
+        height: 400px;
+    }
+
+
+    .screenshot-thumb {
+        flex-basis: 125px;
+
+        width: 125px;
+        height: 70px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .game-hero {
+        padding:
+            40px 16px 50px;
+    }
+
+
+    .game-detail-card {
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+
+        padding: 20px;
+    }
+
+
+    .game-cover-area {
+        max-width: 330px;
+
+        margin: 0 auto;
+    }
+
+
+    .game-detail-cover,
+    .game-no-cover {
+        height: 430px;
+    }
+
+
+    .game-info {
+        text-align: center;
+    }
+
+
+    .game-title {
+        font-size: 2.3rem;
+    }
+
+
+    .game-release {
+        align-items: center;
+
+        padding:
+            10px 0 0;
+
+        border-left: none;
+
+        border-top:
+            3px solid #7267ff;
+    }
+
+
+    .game-actions {
+        justify-content: center;
+    }
+
+
+    .game-library-menu {
+        text-align: left;
+    }
+
+
+    .game-media-section {
+        padding:
+            40px 16px 45px;
+    }
+
+
+    .game-content {
+        padding:
+            10px 16px 70px;
+    }
+
+
+    .game-description-section {
+        padding:
+            23px 21px;
+    }
+
+
+    .comment-form-card {
+        padding:
+            22px 20px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .game-detail-cover,
+    .game-no-cover {
+        height: 360px;
+    }
+
+
+    .game-title {
+        font-size: 2rem;
+    }
+
+
+    .game-actions {
+        width: 100%;
+
+        flex-direction: column;
+    }
+
+
+    .back-button,
+    .game-library-dropdown,
+    .library-login-button,
+    .library-unavailable {
+        width: 100%;
+    }
+
+
+    .game-library-dropdown {
+        min-width: 0;
+    }
+
+
+    .game-library-menu {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    .screenshot-thumb {
+        flex:
+            0 0 105px;
+
+        width: 105px;
+        height: 60px;
+    }
+
+
+    .section-title h2 {
+        font-size: 21px;
+    }
+
+    .game-library-item-added {
+        cursor: default;
+
+        background:
+            rgba(34, 197, 94, 0.055);
+
+        opacity: 0.72;
+    }
+
+
+    .game-library-item-added:hover {
+        background:
+            rgba(34, 197, 94, 0.055);
+    }
+
+
+    .game-library-item-added:disabled {
+        cursor: not-allowed;
+    }
+
+
+    .game-library-added {
+        margin-left: auto;
+
+        flex-shrink: 0;
+
+        color: #4ade80;
+
+        font-size: 10px;
+        font-weight: 850;
+    }
+
+}
