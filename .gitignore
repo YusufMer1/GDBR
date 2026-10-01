@@ -72,3 +72,9 @@ Thumbs.db
 admin_debug.py
 debug_output.txt
 tmp_check.py
+
+# Database export / migration files
+data.json
+
+# Local migration helper
+migrate_media_to_cloudinary.py
