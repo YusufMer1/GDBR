@@ -1,10 +1,14 @@
+import hashlib
 import secrets
 import smtplib
 
 from datetime import timedelta
 
+from PIL import Image
+
 from django.conf import settings
 from django.contrib import messages
+
 from django.contrib.auth import (
     authenticate,
     get_user_model,
@@ -12,18 +16,27 @@ from django.contrib.auth import (
     logout as auth_logout,
     update_session_auth_hash,
 )
+
 from django.contrib.auth.hashers import (
     make_password,
     check_password,
 )
+
+from django.contrib.auth.password_validation import (
+    validate_password,
+)
+
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
+
 from django.shortcuts import (
     get_object_or_404,
     redirect,
     render,
 )
+
 from django.utils import timezone
 
 from .models import (
@@ -35,6 +48,87 @@ from .models import (
 User = get_user_model()
 
 
+# =========================================================
+# SECURITY SETTINGS
+# =========================================================
+
+MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 MB
+
+ALLOWED_AVATAR_TYPES = {
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+}
+
+LOGIN_MAX_ATTEMPTS = 10
+LOGIN_BLOCK_SECONDS = 15 * 60
+
+REGISTER_MAX_EMAILS = 5
+REGISTER_BLOCK_SECONDS = 10 * 60
+
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def get_client_ip(request):
+
+    forwarded_for = request.META.get(
+        "HTTP_X_FORWARDED_FOR"
+    )
+
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+
+    return request.META.get(
+        "REMOTE_ADDR",
+        "unknown"
+    )
+
+
+def safe_cache_part(value):
+
+    return hashlib.sha256(
+        value.encode("utf-8")
+    ).hexdigest()
+
+
+def validate_avatar_file(avatar):
+
+    if avatar.size > MAX_AVATAR_SIZE:
+        raise ValidationError(
+            "Avatar must be smaller than 5 MB."
+        )
+
+    content_type = getattr(
+        avatar,
+        "content_type",
+        ""
+    )
+
+    if content_type not in ALLOWED_AVATAR_TYPES:
+        raise ValidationError(
+            "Avatar must be a JPG, PNG, or WEBP image."
+        )
+
+    try:
+
+        image = Image.open(avatar)
+        image.verify()
+
+    except Exception:
+
+        raise ValidationError(
+            "The uploaded avatar is not a valid image."
+        )
+
+    finally:
+
+        try:
+            avatar.seek(0)
+        except Exception:
+            pass
+
 
 # =========================================================
 # REGISTER
@@ -44,7 +138,6 @@ def register(request):
 
     if request.user.is_authenticated:
         return redirect("home")
-
 
     if request.method == "POST":
 
@@ -68,7 +161,6 @@ def register(request):
             ""
         )
 
-
         # =====================================================
         # USERNAME
         # =====================================================
@@ -84,7 +176,6 @@ def register(request):
                 "register"
             )
 
-
         if len(username) < 3:
 
             messages.error(
@@ -95,7 +186,6 @@ def register(request):
             return redirect(
                 "register"
             )
-
 
         if User.objects.filter(
             username__iexact=username
@@ -109,7 +199,6 @@ def register(request):
             return redirect(
                 "register"
             )
-
 
         # =====================================================
         # EMAIL
@@ -126,8 +215,6 @@ def register(request):
                 "register"
             )
 
-
-        # Check basic email format
         try:
 
             validate_email(
@@ -145,8 +232,6 @@ def register(request):
                 "register"
             )
 
-
-        # Only Gmail
         if not email.endswith(
             "@gmail.com"
         ):
@@ -160,7 +245,6 @@ def register(request):
                 "register"
             )
 
-
         if User.objects.filter(
             email__iexact=email
         ).exists():
@@ -173,7 +257,6 @@ def register(request):
             return redirect(
                 "register"
             )
-
 
         # =====================================================
         # PASSWORD
@@ -190,7 +273,6 @@ def register(request):
                 "register"
             )
 
-
         if password1 != password2:
 
             messages.error(
@@ -202,20 +284,33 @@ def register(request):
                 "register"
             )
 
+        temporary_user = User(
+            username=username,
+            email=email,
+        )
 
-        if len(password1) < 8:
+        try:
 
-            messages.error(
-                request,
-                "Password must be at least 8 characters long."
+            validate_password(
+                password1,
+                user=temporary_user
             )
+
+        except ValidationError as error:
+
+            for message in error.messages:
+
+                messages.error(
+                    request,
+                    message
+                )
 
             return redirect(
                 "register"
             )
 
         # =====================================================
-        # PREVENT DUPLICATE VERIFICATION EMAILS
+        # EXISTING VERIFICATION
         # =====================================================
 
         existing_pending = (
@@ -230,8 +325,6 @@ def register(request):
 
         if existing_pending:
 
-            # Son kod çok yakın zamanda gönderildiyse
-            # tekrar email gönderme.
             if (
                 timezone.now()
                 - existing_pending.created_at
@@ -248,7 +341,35 @@ def register(request):
                     token=existing_pending.token
                 )
 
+        # =====================================================
+        # REGISTER RATE LIMIT
+        # =====================================================
 
+        client_ip = get_client_ip(
+            request
+        )
+
+        register_key = (
+            "register_email:"
+            + safe_cache_part(client_ip)
+        )
+
+        register_count = cache.get(
+            register_key,
+            0
+        )
+
+        if register_count >= REGISTER_MAX_EMAILS:
+
+            messages.error(
+                request,
+                "Too many verification emails were requested. "
+                "Please try again later."
+            )
+
+            return redirect(
+                "register"
+            )
 
         # =====================================================
         # DELETE OLD PENDING REGISTRATIONS
@@ -258,11 +379,9 @@ def register(request):
             email__iexact=email
         ).delete()
 
-
         PendingRegistration.objects.filter(
             username__iexact=username
         ).delete()
-
 
         # =====================================================
         # CREATE VERIFICATION CODE
@@ -273,7 +392,6 @@ def register(request):
                 900000
             ) + 100000
         )
-
 
         pending = (
             PendingRegistration.objects.create(
@@ -296,39 +414,38 @@ def register(request):
                         minutes=10
                     )
                 ),
-
             )
         )
 
-
         # =====================================================
-        # SEND VERIFICATION EMAIL
+        # SEND EMAIL
         # =====================================================
 
         try:
 
-            print("========================================")
-            print("REGISTER EMAIL DEBUG")
-            print("FROM:", repr(settings.DEFAULT_FROM_EMAIL))
-            print("TO:", repr(email))
-            print("CODE:", verification_code)
-            print("========================================")
-
             email_message = EmailMessage(
+
                 subject="GDBR Verification Code",
+
                 body=(
-                    f"Your GDBR verification code is: {verification_code}\n\n"
-                    "This code expires in 10 minutes."
+                    "Welcome to GDBR!\n\n"
+                    f"Your verification code is: "
+                    f"{verification_code}\n\n"
+                    "This code expires in 10 minutes.\n\n"
+                    "If you did not create this account, "
+                    "you can ignore this email."
                 ),
+
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[email],
+
+                to=[
+                    email
+                ],
             )
 
             sent_count = email_message.send(
                 fail_silently=False
             )
-
-            print("EMAIL SENT RESULT:", sent_count)
 
             if sent_count != 1:
 
@@ -344,19 +461,16 @@ def register(request):
                     "register"
                 )
 
+            # Email successfully sent.
+            cache.set(
+                register_key,
+                register_count + 1,
+                REGISTER_BLOCK_SECONDS
+            )
 
-        # =====================================================
-        # RECIPIENT REJECTED
-        # =====================================================
-
-        except smtplib.SMTPRecipientsRefused as error:
+        except smtplib.SMTPRecipientsRefused:
 
             pending.delete()
-
-            print(
-                "SMTP RECIPIENT ERROR:",
-                repr(error)
-            )
 
             messages.error(
                 request,
@@ -367,42 +481,23 @@ def register(request):
                 "register"
             )
 
-
-        # =====================================================
-        # GMAIL AUTH ERROR
-        # =====================================================
-
-        except smtplib.SMTPAuthenticationError as error:
+        except smtplib.SMTPAuthenticationError:
 
             pending.delete()
 
-            print(
-                "SMTP AUTH ERROR:",
-                repr(error)
-            )
-
             messages.error(
                 request,
-                "The email verification service is temporarily unavailable."
+                "The email verification service is "
+                "temporarily unavailable."
             )
 
             return redirect(
                 "register"
             )
 
-
-        # =====================================================
-        # SMTP ERROR
-        # =====================================================
-
-        except smtplib.SMTPException as error:
+        except smtplib.SMTPException:
 
             pending.delete()
-
-            print(
-                "SMTP ERROR:",
-                repr(error)
-            )
 
             messages.error(
                 request,
@@ -414,56 +509,35 @@ def register(request):
                 "register"
             )
 
-
-        # =====================================================
-        # OTHER ERROR
-        # =====================================================
-
-        except Exception as error:
+        except Exception:
 
             pending.delete()
 
-            print(
-                "EMAIL ERROR TYPE:",
-                type(error).__name__
-            )
-
-            print(
-                "EMAIL ERROR:",
-                repr(error)
-            )
-
             messages.error(
                 request,
-                "Something went wrong while sending the verification email."
+                "Something went wrong while sending "
+                "the verification email."
             )
 
             return redirect(
                 "register"
             )
 
-
-        # =====================================================
-        # SUCCESS
-        # =====================================================
-
         messages.success(
             request,
-            "A verification code has been sent to your Gmail address."
+            "A verification code has been sent "
+            "to your Gmail address."
         )
-
 
         return redirect(
             "verify_email",
             token=pending.token
         )
 
-
     return render(
         request,
         "account/register.html"
     )
-
 
 
 # =========================================================
@@ -474,7 +548,6 @@ def login(request):
 
     if request.user.is_authenticated:
         return redirect("home")
-
 
     if request.method == "POST":
 
@@ -488,6 +561,39 @@ def login(request):
             ""
         )
 
+        client_ip = get_client_ip(
+            request
+        )
+
+        login_identifier = (
+            client_ip
+            + ":"
+            + username.lower()
+        )
+
+        login_key = (
+            "login_attempt:"
+            + safe_cache_part(
+                login_identifier
+            )
+        )
+
+        failed_attempts = cache.get(
+            login_key,
+            0
+        )
+
+        if failed_attempts >= LOGIN_MAX_ATTEMPTS:
+
+            return render(
+                request,
+                "account/login.html",
+                {
+                    "error":
+                        "Too many failed login attempts. "
+                        "Please try again later."
+                }
+            )
 
         user = authenticate(
             request,
@@ -495,8 +601,11 @@ def login(request):
             password=password
         )
 
-
         if user is not None:
+
+            cache.delete(
+                login_key
+            )
 
             auth_login(
                 request,
@@ -507,6 +616,11 @@ def login(request):
                 "home"
             )
 
+        cache.set(
+            login_key,
+            failed_attempts + 1,
+            LOGIN_BLOCK_SECONDS
+        )
 
         return render(
             request,
@@ -517,12 +631,10 @@ def login(request):
             }
         )
 
-
     return render(
         request,
         "account/login.html"
     )
-
 
 
 # =========================================================
@@ -537,11 +649,9 @@ def logout_view(request):
             request
         )
 
-
     return redirect(
         "login"
     )
-
 
 
 # =========================================================
@@ -556,18 +666,14 @@ def profile(request):
             "login"
         )
 
-
     profile_obj, _ = (
         Profile.objects.get_or_create(
             user=request.user
         )
     )
 
-
     errors = []
-
     success = None
-
 
     if request.method == "POST":
 
@@ -595,7 +701,6 @@ def profile(request):
             "avatar"
         )
 
-
         # =====================================================
         # USERNAME
         # =====================================================
@@ -615,12 +720,18 @@ def profile(request):
                     "Username already taken."
                 )
 
+            elif len(username) < 3:
+
+                errors.append(
+                    "Username must be at least "
+                    "3 characters long."
+                )
+
             else:
 
                 request.user.username = (
                     username
                 )
-
 
         # =====================================================
         # EMAIL
@@ -631,46 +742,12 @@ def profile(request):
             and email != request.user.email
         ):
 
-            try:
-
-                validate_email(
-                    email
-                )
-
-            except ValidationError:
-
-                errors.append(
-                    "Please enter a valid email address."
-                )
-
-
-            if not email.endswith(
-                "@gmail.com"
-            ):
-
-                errors.append(
-                    "Only Gmail addresses are allowed."
-                )
-
-
-            elif User.objects.filter(
-                email__iexact=email
-            ).exclude(
-                pk=request.user.pk
-            ).exists():
-
-                errors.append(
-                    "Email already in use."
-                )
-
-            else:
-
-                if not errors:
-
-                    request.user.email = (
-                        email
-                    )
-
+            # Do NOT change an account email without
+            # verifying the new address first.
+            errors.append(
+                "Email changes require verification. "
+                "Email changing is temporarily disabled."
+            )
 
         # =====================================================
         # PASSWORD
@@ -684,20 +761,26 @@ def profile(request):
                     "Passwords do not match."
                 )
 
-
-            elif len(password) < 8:
-
-                errors.append(
-                    "Password must be at least 8 characters long."
-                )
-
-
             else:
 
-                request.user.set_password(
-                    password
-                )
+                try:
 
+                    validate_password(
+                        password,
+                        user=request.user
+                    )
+
+                except ValidationError as error:
+
+                    errors.extend(
+                        error.messages
+                    )
+
+                else:
+
+                    request.user.set_password(
+                        password
+                    )
 
         # =====================================================
         # AVATAR
@@ -705,10 +788,23 @@ def profile(request):
 
         if avatar:
 
-            profile_obj.avatar = (
-                avatar
-            )
+            try:
 
+                validate_avatar_file(
+                    avatar
+                )
+
+            except ValidationError as error:
+
+                errors.extend(
+                    error.messages
+                )
+
+            else:
+
+                profile_obj.avatar = (
+                    avatar
+                )
 
         # =====================================================
         # SAVE
@@ -720,7 +816,6 @@ def profile(request):
 
             profile_obj.save()
 
-
             if password:
 
                 update_session_auth_hash(
@@ -728,11 +823,9 @@ def profile(request):
                     request.user
                 )
 
-
             success = (
                 "Profile updated successfully."
             )
-
 
     return render(
         request,
@@ -753,7 +846,6 @@ def profile(request):
     )
 
 
-
 # =========================================================
 # VERIFY EMAIL
 # =========================================================
@@ -768,15 +860,13 @@ def verify_email(
         token=token
     )
 
-
     # =====================================================
-    # EXPIRED CODE
+    # EXPIRED
     # =====================================================
 
     if timezone.now() > pending.expires_at:
 
         pending.delete()
-
 
         messages.error(
             request,
@@ -784,11 +874,9 @@ def verify_email(
             "Please register again."
         )
 
-
         return redirect(
             "register"
         )
-
 
     # =====================================================
     # POST
@@ -801,11 +889,6 @@ def verify_email(
             ""
         ).strip()
 
-
-        # =================================================
-        # EMPTY CODE
-        # =================================================
-
         if not code:
 
             messages.error(
@@ -813,16 +896,10 @@ def verify_email(
                 "Please enter the verification code."
             )
 
-
             return redirect(
                 "verify_email",
                 token=pending.token
             )
-
-
-        # =================================================
-        # CODE FORMAT
-        # =================================================
 
         if (
             not code.isdigit()
@@ -831,15 +908,14 @@ def verify_email(
 
             messages.error(
                 request,
-                "Please enter a valid 6-digit verification code."
+                "Please enter a valid "
+                "6-digit verification code."
             )
-
 
             return redirect(
                 "verify_email",
                 token=pending.token
             )
-
 
         # =================================================
         # ATTEMPT LIMIT
@@ -849,18 +925,15 @@ def verify_email(
 
             pending.delete()
 
-
             messages.error(
                 request,
                 "Too many incorrect attempts. "
                 "Please register again."
             )
 
-
             return redirect(
                 "register"
             )
-
 
         # =================================================
         # CHECK CODE
@@ -873,24 +946,20 @@ def verify_email(
 
             pending.attempts += 1
 
-
             pending.save(
                 update_fields=[
                     "attempts"
                 ]
             )
 
-
             remaining = (
                 5
                 - pending.attempts
             )
 
-
             if remaining <= 0:
 
                 pending.delete()
-
 
                 messages.error(
                     request,
@@ -898,11 +967,9 @@ def verify_email(
                     "Please register again."
                 )
 
-
                 return redirect(
                     "register"
                 )
-
 
             messages.error(
                 request,
@@ -910,12 +977,10 @@ def verify_email(
                 f"{remaining} attempts remaining."
             )
 
-
             return redirect(
                 "verify_email",
                 token=pending.token
             )
-
 
         # =================================================
         # FINAL USERNAME CHECK
@@ -927,17 +992,14 @@ def verify_email(
 
             pending.delete()
 
-
             messages.error(
                 request,
                 "This username is no longer available."
             )
 
-
             return redirect(
                 "register"
             )
-
 
         # =================================================
         # FINAL EMAIL CHECK
@@ -949,17 +1011,15 @@ def verify_email(
 
             pending.delete()
 
-
             messages.error(
                 request,
-                "An account with this email already exists."
+                "An account with this email "
+                "already exists."
             )
-
 
             return redirect(
                 "register"
             )
-
 
         # =================================================
         # CREATE USER
@@ -970,18 +1030,14 @@ def verify_email(
             email=pending.email
         )
 
-
-        # Password is already securely hashed.
+        # Password was already hashed during registration.
         user.password = (
             pending.password_hash
         )
 
-
         user.save()
 
-
         pending.delete()
-
 
         messages.success(
             request,
@@ -989,11 +1045,9 @@ def verify_email(
             "You can now sign in."
         )
 
-
         return redirect(
             "login"
         )
-
 
     # =====================================================
     # GET
@@ -1010,4 +1064,3 @@ def verify_email(
                 pending.token,
         }
     )
-

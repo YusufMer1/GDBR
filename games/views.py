@@ -1,36 +1,26 @@
-from django.http import JsonResponse
-from django.shortcuts import (
-    render,
-    get_object_or_404,
-    redirect,
-)
-
-import time
 import json
-from .ai import ask_gdbr_ai
-
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.contrib import messages
-from django.conf import settings
-from django.core.mail import send_mail
-from django.db.models import F, Count
-from django.contrib.auth import get_user_model
 from datetime import datetime
 
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-
-
-from .models import (
-    Game,
-    GameOfTheYear,
-    Genre,
-    GameSeries,
-    GameLibrary,
-    GameLibraryView,
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.core.paginator import Paginator
+from django.core.validators import validate_email
+from django.db.models import Count
+from django.http import JsonResponse
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
 )
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
+from .ai import ask_gdbr_ai
 from .api import (
     search_games_from_igdb,
     save_game_from_igdb,
@@ -40,6 +30,81 @@ from .api import (
     get_top_games_by_genre_from_igdb,
     search_game_suggestions_from_igdb,
 )
+from .models import (
+    Game,
+    GameOfTheYear,
+    Genre,
+    GameSeries,
+    GameLibrary,
+    GameLibraryView,
+)
+
+
+User = get_user_model()
+
+
+# =========================================================
+# RATE LIMIT SETTINGS
+# =========================================================
+
+AI_MAX_REQUESTS = 20
+AI_RATE_LIMIT_SECONDS = 10 * 60
+
+CONTACT_MAX_REQUESTS = 5
+CONTACT_RATE_LIMIT_SECONDS = 60 * 60
+
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def get_client_ip(request):
+
+    forwarded_for = request.META.get(
+        "HTTP_X_FORWARDED_FOR"
+    )
+
+    if forwarded_for:
+
+        return (
+            forwarded_for
+            .split(",")[0]
+            .strip()
+        )
+
+    return request.META.get(
+        "REMOTE_ADDR",
+        "unknown"
+    )
+
+
+def safe_back_redirect(
+    request,
+    fallback="home"
+):
+
+    referer = request.META.get(
+        "HTTP_REFERER"
+    )
+
+    if (
+        referer
+        and url_has_allowed_host_and_scheme(
+            referer,
+            allowed_hosts={
+                request.get_host()
+            },
+            require_https=request.is_secure(),
+        )
+    ):
+
+        return redirect(
+            referer
+        )
+
+    return redirect(
+        fallback
+    )
 
 
 # =========================================================
@@ -47,8 +112,6 @@ from .api import (
 # =========================================================
 
 def home(request):
-
-    
 
     search = request.GET.get(
         "q",
@@ -60,30 +123,32 @@ def home(request):
         ""
     ).strip()
 
-    
     genres = (
         Genre.objects
         .all()
         .order_by("name")
     )
 
-    
-
-    
     # Local database games
-    games = Game.objects.all()
+    games = (
+        Game.objects
+        .all()
+        .order_by("id")
+    )
 
-    
+    # =====================================================
+    # TRENDING GAMES
+    # =====================================================
 
-
-    # IGDB sections
     trending_games = cache.get(
         "home_trending_games"
     )
 
     if trending_games is None:
 
-        trending_games = get_top_rated_games_from_igdb()
+        trending_games = (
+            get_top_rated_games_from_igdb()
+        )
 
         cache.set(
             "home_trending_games",
@@ -91,13 +156,19 @@ def home(request):
             60 * 15
         )
 
+    # =====================================================
+    # CURRENT YEAR
+    # =====================================================
+
     current_year_games = cache.get(
         "home_current_year_games"
     )
 
     if current_year_games is None:
 
-        current_year_games = get_current_year_games_from_igdb()
+        current_year_games = (
+            get_current_year_games_from_igdb()
+        )
 
         cache.set(
             "home_current_year_games",
@@ -105,19 +176,20 @@ def home(request):
             60 * 30
         )
 
+    # =====================================================
+    # POPULAR SERIES
+    # =====================================================
 
-
-    # Popular Series
     popular_series = (
         GameSeries.objects
         .all()[:6]
     )
 
+    # =====================================================
+    # GENRE GAMES
+    # =====================================================
 
-    # Default genre: Action
     default_genre_id = 4
-
-    
 
     genre_games = cache.get(
         "home_genres"
@@ -125,7 +197,12 @@ def home(request):
 
     if genre_games is None:
 
-        genre_games = get_top_games_by_genre_from_igdb(default_genre_id, limit=20)
+        genre_games = (
+            get_top_games_by_genre_from_igdb(
+                default_genre_id,
+                limit=20
+            )
+        )
 
         cache.set(
             "home_genres",
@@ -133,7 +210,9 @@ def home(request):
             60 * 60
         )
 
-   
+    # =====================================================
+    # FEATURED LIBRARIES
+    # =====================================================
 
     featured_libraries = (
         GameLibrary.objects
@@ -158,7 +237,6 @@ def home(request):
         )[:4]
     )
 
-
     # =====================================================
     # FAVORITE GAMES
     # =====================================================
@@ -181,7 +259,6 @@ def home(request):
 
     ]
 
-
     favouritegames = list(
 
         Game.objects.filter(
@@ -189,7 +266,6 @@ def home(request):
         )
 
     )
-
 
     # =====================================================
     # FILTERS
@@ -201,13 +277,11 @@ def home(request):
             genres__slug=genre_slug
         )
 
-
     if search:
 
         games = games.filter(
             title__icontains=search
         )
-
 
     # =====================================================
     # PAGINATION
@@ -225,7 +299,6 @@ def home(request):
     games = paginator.get_page(
         page_number
     )
-
 
     context = {
 
@@ -251,10 +324,6 @@ def home(request):
 
     }
 
-    
-
-    
-
     return render(
         request,
         "game/home.html",
@@ -271,13 +340,28 @@ def genre_games_ajax(
     genre_id
 ):
 
-    games = (
-        get_top_games_by_genre_from_igdb(
-            genre_id,
-            limit=20
-        )
+    cache_key = (
+        f"genre_games_{genre_id}"
     )
 
+    games = cache.get(
+        cache_key
+    )
+
+    if games is None:
+
+        games = (
+            get_top_games_by_genre_from_igdb(
+                genre_id,
+                limit=20
+            )
+        )
+
+        cache.set(
+            cache_key,
+            games,
+            60 * 30
+        )
 
     return render(
         request,
@@ -288,15 +372,19 @@ def genre_games_ajax(
     )
 
 
+# =========================================================
+# GAME MEDIA
+# =========================================================
 
-
-def game_media(request, slug):
+def game_media(
+    request,
+    slug
+):
 
     game = get_object_or_404(
         Game,
         slug=slug
     )
-
 
     if not game.igdb_id:
 
@@ -305,25 +393,24 @@ def game_media(request, slug):
             "videos": [],
         })
 
-
     cache_key = (
         f"game_media_{game.igdb_id}"
     )
-
 
     media = cache.get(
         cache_key
     )
 
-
     if media is None:
 
-        igdb_data = get_game_from_igdb(
-            game.igdb_id
+        igdb_data = (
+            get_game_from_igdb(
+                game.igdb_id
+            )
         )
 
-
         media = {
+
             "screenshots":
                 igdb_data.get(
                     "screenshots",
@@ -339,8 +426,8 @@ def game_media(request, slug):
                 )
                 if igdb_data
                 else [],
-        }
 
+        }
 
         cache.set(
             cache_key,
@@ -348,29 +435,30 @@ def game_media(request, slug):
             60 * 60 * 6
         )
 
-
     return JsonResponse(
         media
     )
+
 
 # =========================================================
 # GAME DETAIL
 # =========================================================
 
-def game_detail(request, slug):
+def game_detail(
+    request,
+    slug
+):
 
     game = get_object_or_404(
         Game,
         slug=slug
     )
 
-
     comments = (
         game.comments
         .all()
         .order_by("-created_at")
     )
-
 
     # =====================================================
     # USER LIBRARIES
@@ -381,26 +469,44 @@ def game_detail(request, slug):
     if request.user.is_authenticated:
 
         libraries = (
+
             GameLibrary.objects
-            .filter(user=request.user)
-            .prefetch_related("games")
-            .order_by("-created_at")
+            .filter(
+                user=request.user
+            )
+            .prefetch_related(
+                "games"
+            )
+            .order_by(
+                "-created_at"
+            )
+
         )
 
-        libraries = list(libraries)
+        libraries = list(
+            libraries
+        )
 
         for library in libraries:
 
             contains_game = any(
+
                 library_game.id == game.id
-                for library_game in library.games.all()
+
+                for library_game
+                in library.games.all()
+
             )
 
             library_options.append({
-                "library": library,
-                "contains_game": contains_game,
-            })
 
+                "library":
+                    library,
+
+                "contains_game":
+                    contains_game,
+
+            })
 
     # =====================================================
     # COMMENTS POST
@@ -418,6 +524,19 @@ def game_detail(request, slug):
 
         if content:
 
+            if len(content) > 2000:
+
+                messages.error(
+                    request,
+                    "Comment cannot exceed "
+                    "2000 characters."
+                )
+
+                return redirect(
+                    "game_detail",
+                    slug=slug
+                )
+
             game.comments.create(
                 user=request.user,
                 content=content
@@ -428,22 +547,29 @@ def game_detail(request, slug):
             slug=slug
         )
 
-
     return render(
         request,
         "game_detail.html",
         {
-            "game": game,
-            "comments": comments,
-            "library_options": library_options,
+            "game":
+                game,
+
+            "comments":
+                comments,
+
+            "library_options":
+                library_options,
         }
     )
+
 
 # =========================================================
 # GAME OF THE YEAR
 # =========================================================
 
-def game_of_the_year(request):
+def game_of_the_year(
+    request
+):
 
     goty_games = (
 
@@ -464,12 +590,12 @@ def game_of_the_year(request):
 
     )
 
-
     return render(
         request,
         "game/goty.html",
         {
-            "goty_games": goty_games
+            "goty_games":
+                goty_games
         }
     )
 
@@ -477,9 +603,10 @@ def game_of_the_year(request):
 # =========================================================
 # SEARCH
 # =========================================================
-User = get_user_model()
 
-def search_games(request):
+def search_games(
+    request
+):
 
     search_query = request.GET.get(
         "q",
@@ -491,13 +618,11 @@ def search_games(request):
         "games"
     ).strip()
 
-
     game_results = []
     library_results = []
     user_results = []
 
     user_libraries = []
-
 
     # =====================================================
     # SEARCH GAMES
@@ -508,15 +633,17 @@ def search_games(request):
         and search_type == "games"
     ):
 
-        game_results = search_games_from_igdb(
-            search_query,
-            limit=20
+        game_results = (
+            search_games_from_igdb(
+                search_query,
+                limit=20
+            )
         )
-
 
         if request.user.is_authenticated:
 
             libraries = list(
+
                 GameLibrary.objects
                 .filter(
                     user=request.user
@@ -527,36 +654,45 @@ def search_games(request):
                 .order_by(
                     "-created_at"
                 )
-            )
 
+            )
 
             for library in libraries:
 
                 library.igdb_game_ids = {
+
                     game.igdb_id
-                    for game in library.games.all()
+
+                    for game
+                    in library.games.all()
+
                     if game.igdb_id
                 }
 
-
             for game in game_results:
 
-                game_id = game.get("id")
+                game_id = game.get(
+                    "id"
+                )
 
                 game["library_options"] = []
 
                 for library in libraries:
 
-                    game["library_options"].append({
-                        "library": library,
+                    game[
+                        "library_options"
+                    ].append({
+
+                        "library":
+                            library,
+
                         "contains_game":
                             game_id
                             in library.igdb_game_ids,
+
                     })
 
-
             user_libraries = libraries
-
 
     # =====================================================
     # SEARCH LIBRARIES
@@ -568,6 +704,7 @@ def search_games(request):
     ):
 
         library_results = (
+
             GameLibrary.objects
             .filter(
                 is_public=True,
@@ -582,8 +719,8 @@ def search_games(request):
             .order_by(
                 "-created_at"
             )
-        )
 
+        )
 
     # =====================================================
     # SEARCH USERS
@@ -595,6 +732,7 @@ def search_games(request):
     ):
 
         user_results = (
+
             User.objects
             .filter(
                 username__icontains=search_query
@@ -602,50 +740,69 @@ def search_games(request):
             .order_by(
                 "username"
             )[:30]
-        )
 
+        )
 
     return render(
         request,
         "game/search_results.html",
         {
-            "search_query": search_query,
-            "search_type": search_type,
+            "search_query":
+                search_query,
 
-            "results": game_results,
+            "search_type":
+                search_type,
 
-            "library_results": library_results,
+            "results":
+                game_results,
 
-            "user_results": user_results,
+            "library_results":
+                library_results,
 
-            "user_libraries": user_libraries,
+            "user_results":
+                user_results,
+
+            "user_libraries":
+                user_libraries,
         }
     )
+
 
 # =========================================================
 # IGDB GAME DETAIL
 # =========================================================
 
+@login_required(
+    login_url="login"
+)
 def game_detail_igdb(
     request,
     igdb_id
 ):
 
+    if igdb_id <= 0:
+
+        return redirect(
+            "search_games"
+        )
+
     game = (
+
         Game.objects
         .filter(
             igdb_id=igdb_id
         )
         .first()
-    )
 
+    )
 
     if not game:
 
-        game = save_game_from_igdb(
-            igdb_id
+        game = (
+            save_game_from_igdb(
+                igdb_id
+            )
         )
-
 
     if game:
 
@@ -653,7 +810,6 @@ def game_detail_igdb(
             "game_detail",
             slug=game.slug
         )
-
 
     return redirect(
         "search_games"
@@ -664,19 +820,23 @@ def game_detail_igdb(
 # GAME SERIES
 # =========================================================
 
-def game_series(request):
+def game_series(
+    request
+):
 
     series = (
+
         GameSeries.objects
         .all()
-    )
 
+    )
 
     return render(
         request,
         "game/game_series.html",
         {
-            "series": series
+            "series":
+                series
         }
     )
 
@@ -695,7 +855,6 @@ def game_series_detail(
         slug=slug
     )
 
-
     entries = (
 
         series.entries
@@ -706,16 +865,15 @@ def game_series_detail(
 
     )
 
-
     return render(
         request,
         "game/game_series_detail.html",
         {
+            "series":
+                series,
 
-            "series": series,
-
-            "entries": entries,
-
+            "entries":
+                entries,
         }
     )
 
@@ -724,7 +882,9 @@ def game_series_detail(
 # ABOUT
 # =========================================================
 
-def about(request):
+def about(
+    request
+):
 
     return render(
         request,
@@ -736,20 +896,34 @@ def about(request):
 # 2026 GAMES
 # =========================================================
 
-def games_2026(request):
+def games_2026(
+    request
+):
 
-    games = (
-        get_current_year_games_from_igdb(
-            limit=30
-        )
+    games = cache.get(
+        "games_2026"
     )
 
+    if games is None:
+
+        games = (
+            get_current_year_games_from_igdb(
+                limit=30
+            )
+        )
+
+        cache.set(
+            "games_2026",
+            games,
+            60 * 60
+        )
 
     return render(
         request,
         "game/games_2026.html",
         {
-            "games_2026": games
+            "games_2026":
+                games
         }
     )
 
@@ -758,9 +932,47 @@ def games_2026(request):
 # CONTACT
 # =========================================================
 
-def contact(request):
+def contact(
+    request
+):
 
     if request.method == "POST":
+
+        # =================================================
+        # RATE LIMIT
+        # =================================================
+
+        client_ip = get_client_ip(
+            request
+        )
+
+        contact_key = (
+            f"contact_rate_{client_ip}"
+        )
+
+        contact_count = cache.get(
+            contact_key,
+            0
+        )
+
+        if (
+            contact_count
+            >= CONTACT_MAX_REQUESTS
+        ):
+
+            messages.error(
+                request,
+                "Too many messages were sent. "
+                "Please try again later."
+            )
+
+            return redirect(
+                "contact"
+            )
+
+        # =================================================
+        # FORM DATA
+        # =================================================
 
         name = request.POST.get(
             "name",
@@ -770,7 +982,7 @@ def contact(request):
         email = request.POST.get(
             "email",
             ""
-        ).strip()
+        ).strip().lower()
 
         subject = request.POST.get(
             "subject",
@@ -782,6 +994,9 @@ def contact(request):
             ""
         ).strip()
 
+        # =================================================
+        # REQUIRED FIELDS
+        # =================================================
 
         if (
             not name
@@ -794,22 +1009,80 @@ def contact(request):
                 "Please fill in all required fields."
             )
 
-
-        else:
-
-            if not subject:
-
-                subject = (
-                    "GDBR Contact Message"
-                )
-
-
-            email_subject = (
-                f"[GDBR Contact] {subject}"
+            return redirect(
+                "contact"
             )
 
+        # =================================================
+        # EMAIL VALIDATION
+        # =================================================
 
-            email_body = f"""
+        try:
+
+            validate_email(
+                email
+            )
+
+        except ValidationError:
+
+            messages.error(
+                request,
+                "Please enter a valid email address."
+            )
+
+            return redirect(
+                "contact"
+            )
+
+        # =================================================
+        # INPUT LENGTHS
+        # =================================================
+
+        if len(name) > 100:
+
+            messages.error(
+                request,
+                "Name is too long."
+            )
+
+            return redirect(
+                "contact"
+            )
+
+        if len(subject) > 200:
+
+            messages.error(
+                request,
+                "Subject is too long."
+            )
+
+            return redirect(
+                "contact"
+            )
+
+        if len(message) > 5000:
+
+            messages.error(
+                request,
+                "Message cannot exceed "
+                "5000 characters."
+            )
+
+            return redirect(
+                "contact"
+            )
+
+        if not subject:
+
+            subject = (
+                "GDBR Contact Message"
+            )
+
+        email_subject = (
+            f"[GDBR Contact] {subject}"
+        )
+
+        email_body = f"""
 New message from GDBR Contact Form
 
 Name:
@@ -825,52 +1098,71 @@ Message:
 {message}
 """
 
+        try:
 
-            try:
+            sent_count = send_mail(
 
-                send_mail(
+                subject=email_subject,
 
-                    subject=email_subject,
+                message=email_body,
 
-                    message=email_body,
+                from_email=(
+                    settings.DEFAULT_FROM_EMAIL
+                ),
 
-                    from_email=(
-                        settings.DEFAULT_FROM_EMAIL
-                    ),
+                recipient_list=[
+                    settings.CONTACT_EMAIL
+                ],
 
-                    recipient_list=[
-                        settings.CONTACT_EMAIL
-                    ],
+                fail_silently=False,
 
-                    fail_silently=False,
+            )
 
-                )
+            if sent_count != 1:
 
-
-                messages.success(
+                messages.error(
                     request,
-                    "Your message has been sent successfully."
+                    "The message could not be sent. "
+                    "Please try again later."
                 )
-
 
                 return redirect(
                     "contact"
                 )
 
+            # Only count successful emails.
+            cache.set(
+                contact_key,
+                contact_count + 1,
+                CONTACT_RATE_LIMIT_SECONDS
+            )
 
-            except Exception as error:
+            messages.success(
+                request,
+                "Your message has been "
+                "sent successfully."
+            )
 
-                print(
-                    "EMAIL ERROR:",
-                    error
-                )
+            return redirect(
+                "contact"
+            )
 
+        except Exception as error:
 
-                messages.error(
-                    request,
-                    "The message could not be sent. Please try again later."
-                )
+            print(
+                "CONTACT EMAIL ERROR:",
+                type(error).__name__
+            )
 
+            messages.error(
+                request,
+                "The message could not be sent. "
+                "Please try again later."
+            )
+
+            return redirect(
+                "contact"
+            )
 
     return render(
         request,
@@ -889,7 +1181,9 @@ Message:
 @login_required(
     login_url="login"
 )
-def my_libraries(request):
+def my_libraries(
+    request
+):
 
     libraries = (
 
@@ -906,12 +1200,12 @@ def my_libraries(request):
 
     )
 
-
     return render(
         request,
         "game/my_libraries.html",
         {
-            "libraries": libraries
+            "libraries":
+                libraries
         }
     )
 
@@ -924,25 +1218,24 @@ def my_libraries(request):
     login_url="login"
 )
 @require_POST
-def create_library(request):
+def create_library(
+    request
+):
 
     name = request.POST.get(
         "name",
         ""
     ).strip()
 
-
     description = request.POST.get(
         "description",
         ""
     ).strip()
 
-
     visibility = request.POST.get(
         "visibility",
         "private"
     )
-
 
     if not name:
 
@@ -951,16 +1244,35 @@ def create_library(request):
             "Library name is required."
         )
 
+        return redirect(
+            "my_libraries"
+        )
+
+    if len(name) > 100:
+
+        messages.error(
+            request,
+            "Library name is too long."
+        )
 
         return redirect(
             "my_libraries"
         )
 
+    if len(description) > 2000:
+
+        messages.error(
+            request,
+            "Library description is too long."
+        )
+
+        return redirect(
+            "my_libraries"
+        )
 
     is_public = (
         visibility == "public"
     )
-
 
     GameLibrary.objects.create(
 
@@ -974,12 +1286,10 @@ def create_library(request):
 
     )
 
-
     messages.success(
         request,
         f'"{name}" was created successfully.'
     )
-
 
     return redirect(
         "my_libraries"
@@ -996,12 +1306,18 @@ def library_detail(
 ):
 
     library = get_object_or_404(
-        GameLibrary.objects.prefetch_related(
+
+        GameLibrary.objects
+        .select_related(
+            "user"
+        )
+        .prefetch_related(
             "games"
         ),
-        id=library_id
-    )
 
+        id=library_id
+
+    )
 
     # =====================================================
     # PRIVATE LIBRARY CONTROL
@@ -1023,7 +1339,6 @@ def library_detail(
                 "home"
             )
 
-
     # =====================================================
     # UNIQUE VIEW
     # =====================================================
@@ -1035,16 +1350,20 @@ def library_detail(
             user=request.user
         )
 
-
-    games = library.games.all()
-
+    games = (
+        library.games
+        .all()
+    )
 
     return render(
         request,
         "game/library_detail.html",
         {
-            "library": library,
-            "games": games,
+            "library":
+                library,
+
+            "games":
+                games,
         }
     )
 
@@ -1056,87 +1375,12 @@ def library_detail(
 @login_required(
     login_url="login"
 )
-@login_required
+@require_POST
 def delete_library(
     request,
     library_id
 ):
 
-    library = get_object_or_404(
-        GameLibrary,
-        id=library_id
-    )
-
-    if library.user != request.user:
-
-        messages.error(
-            request,
-            "You do not have permission to delete this library."
-        )
-
-        return redirect(
-            "library_detail",
-            library_id=library.id
-        )
-
-    if request.method == "POST":
-
-        library.delete()
-
-        messages.success(
-            request,
-            "Library deleted successfully."
-        )
-
-        return redirect(
-            "my_libraries"
-        )
-
-    return redirect(
-        "library_detail",
-        library_id=library.id
-    )
-
-# =========================================================
-# ADD GAME TO LIBRARY
-# =========================================================
-
-@login_required(
-    login_url="login"
-)
-@require_POST
-def add_game_to_library(request):
-
-    library_id = request.POST.get(
-        "library_id"
-    )
-
-    igdb_id = request.POST.get(
-        "igdb_id"
-    )
-
-
-    if (
-        not library_id
-        or not igdb_id
-    ):
-
-        messages.error(
-            request,
-            "Library or game information is missing."
-        )
-
-
-        return redirect(
-            request.META.get(
-                "HTTP_REFERER",
-                "home"
-            )
-        )
-
-
-    # User can only add games
-    # to their own library.
     library = get_object_or_404(
 
         GameLibrary,
@@ -1147,8 +1391,109 @@ def add_game_to_library(request):
 
     )
 
+    library.delete()
 
-    # Try local database first.
+    messages.success(
+        request,
+        "Library deleted successfully."
+    )
+
+    return redirect(
+        "my_libraries"
+    )
+
+
+# =========================================================
+# ADD GAME TO LIBRARY
+# =========================================================
+
+@login_required(
+    login_url="login"
+)
+@require_POST
+def add_game_to_library(
+    request
+):
+
+    library_id = request.POST.get(
+        "library_id"
+    )
+
+    igdb_id = request.POST.get(
+        "igdb_id"
+    )
+
+    # =====================================================
+    # BASIC VALIDATION
+    # =====================================================
+
+    if not library_id:
+
+        messages.error(
+            request,
+            "Library information is missing."
+        )
+
+        return safe_back_redirect(
+            request
+        )
+
+    try:
+
+        library_id = int(
+            library_id
+        )
+
+        igdb_id = int(
+            igdb_id
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ):
+
+        messages.error(
+            request,
+            "Invalid game information."
+        )
+
+        return safe_back_redirect(
+            request
+        )
+
+    if (
+        library_id <= 0
+        or igdb_id <= 0
+    ):
+
+        messages.error(
+            request,
+            "Invalid game information."
+        )
+
+        return safe_back_redirect(
+            request
+        )
+
+    # =====================================================
+    # GET USER LIBRARY
+    # =====================================================
+
+    library = get_object_or_404(
+
+        GameLibrary,
+
+        id=library_id,
+
+        user=request.user,
+
+    )
+
+    # =====================================================
+    # LOCAL GAME
+    # =====================================================
+
     game = (
 
         Game.objects
@@ -1159,15 +1504,28 @@ def add_game_to_library(request):
 
     )
 
+    # =====================================================
+    # FETCH FROM IGDB
+    # =====================================================
 
-    # If game isn't stored locally,
-    # download it from IGDB.
     if not game:
 
-        game = save_game_from_igdb(
-            int(igdb_id)
-        )
+        try:
 
+            game = (
+                save_game_from_igdb(
+                    igdb_id
+                )
+            )
+
+        except Exception as error:
+
+            print(
+                "IGDB SAVE ERROR:",
+                type(error).__name__
+            )
+
+            game = None
 
     if not game:
 
@@ -1176,17 +1534,14 @@ def add_game_to_library(request):
             "The game could not be added."
         )
 
-
-        return redirect(
-            request.META.get(
-                "HTTP_REFERER",
-                "home"
-            )
+        return safe_back_redirect(
+            request
         )
 
+    # =====================================================
+    # ADD TO LIBRARY
+    # =====================================================
 
-    # Check whether game is
-    # already in this library.
     if (
         library.games
         .filter(
@@ -1197,31 +1552,24 @@ def add_game_to_library(request):
 
         messages.info(
             request,
-            f'"{game.title}" is already in "{library.name}".'
+            f'"{game.title}" is already '
+            f'in "{library.name}".'
         )
-
 
     else:
 
-        # IMPORTANT:
-        # Game is added ONLY to
-        # the selected library.
         library.games.add(
             game
         )
 
-
         messages.success(
             request,
-            f'"{game.title}" was added to "{library.name}".'
+            f'"{game.title}" was added '
+            f'to "{library.name}".'
         )
 
-
-    return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "home"
-        )
+    return safe_back_redirect(
+        request
     )
 
 
@@ -1232,7 +1580,7 @@ def add_game_to_library(request):
 @login_required(
     login_url="login"
 )
-@login_required
+@require_POST
 def remove_game_from_library(
     request,
     library_id,
@@ -1241,52 +1589,14 @@ def remove_game_from_library(
 
     library = get_object_or_404(
         GameLibrary,
-        id=library_id
+        id=library_id,
+        user=request.user,
     )
-
-
-    # =====================================================
-    # OWNER CHECK
-    # =====================================================
-
-    if library.user != request.user:
-
-        messages.error(
-            request,
-            "You do not have permission to modify this library."
-        )
-
-        return redirect(
-            "library_detail",
-            library_id=library.id
-        )
-
-
-    # =====================================================
-    # ONLY POST
-    # =====================================================
-
-    if request.method != "POST":
-
-        return redirect(
-            "library_detail",
-            library_id=library.id
-        )
-
-
-    # =====================================================
-    # GET GAME
-    # =====================================================
 
     game = get_object_or_404(
         Game,
         id=game_id
     )
-
-
-    # =====================================================
-    # REMOVE GAME
-    # =====================================================
 
     if library.games.filter(
         id=game.id
@@ -1301,25 +1611,29 @@ def remove_game_from_library(
             f"{game.title} was removed from the library."
         )
 
-
     return redirect(
         "library_detail",
         library_id=library.id
     )
 
-def search_suggestions(request):
+
+# =========================================================
+# SEARCH SUGGESTIONS
+# =========================================================
+
+def search_suggestions(
+    request
+):
 
     query = request.GET.get(
         "q",
         ""
     ).strip()
 
-
     search_type = request.GET.get(
         "type",
         "games"
     ).strip()
-
 
     if len(query) < 2:
 
@@ -1327,9 +1641,14 @@ def search_suggestions(request):
             "results": []
         })
 
+    # Prevent unnecessarily huge searches.
+    if len(query) > 100:
+
+        return JsonResponse({
+            "results": []
+        })
 
     results = []
-
 
     # =====================================================
     # GAMES
@@ -1337,13 +1656,29 @@ def search_suggestions(request):
 
     if search_type == "games":
 
-        games = (
-            search_game_suggestions_from_igdb(
-                query,
-                limit=6
-            )
+        suggestion_cache_key = (
+            "search_suggestion:"
+            f"{query.lower()}"
         )
 
+        games = cache.get(
+            suggestion_cache_key
+        )
+
+        if games is None:
+
+            games = (
+                search_game_suggestions_from_igdb(
+                    query,
+                    limit=6
+                )
+            )
+
+            cache.set(
+                suggestion_cache_key,
+                games,
+                60 * 5
+            )
 
         for game in games:
 
@@ -1351,23 +1686,23 @@ def search_suggestions(request):
                 "id"
             )
 
-
             game_name = (
+
                 game
                 .get(
                     "name",
                     ""
                 )
                 .strip()
-            )
 
+            )
 
             if (
                 not game_id
                 or not game_name
             ):
-                continue
 
+                continue
 
             release_year = ""
 
@@ -1375,27 +1710,27 @@ def search_suggestions(request):
                 "first_release_date"
             )
 
-
             if timestamp:
 
                 try:
 
                     release_year = (
+
                         datetime
                         .fromtimestamp(
                             timestamp
                         )
                         .year
+
                     )
 
                 except (
                     ValueError,
                     OSError,
-                    TypeError
+                    TypeError,
                 ):
 
                     release_year = ""
-
 
             subtitle = "Game"
 
@@ -1405,8 +1740,8 @@ def search_suggestions(request):
                     f"Game · {release_year}"
                 )
 
-
             results.append({
+
                 "type":
                     "game",
 
@@ -1418,8 +1753,8 @@ def search_suggestions(request):
 
                 "subtitle":
                     subtitle,
-            })
 
+            })
 
     # =====================================================
     # LIBRARIES
@@ -1428,6 +1763,7 @@ def search_suggestions(request):
     elif search_type == "libraries":
 
         libraries = (
+
             GameLibrary.objects
             .filter(
                 is_public=True,
@@ -1444,12 +1780,13 @@ def search_suggestions(request):
             .order_by(
                 "name"
             )[:6]
-        )
 
+        )
 
         for library in libraries:
 
             results.append({
+
                 "type":
                     "library",
 
@@ -1461,8 +1798,8 @@ def search_suggestions(request):
 
                 "subtitle":
                     f"by {library.user.username}",
-            })
 
+            })
 
     # =====================================================
     # USERS
@@ -1471,6 +1808,7 @@ def search_suggestions(request):
     elif search_type == "users":
 
         users = (
+
             User.objects
             .filter(
                 username__icontains=query
@@ -1482,12 +1820,13 @@ def search_suggestions(request):
             .order_by(
                 "username"
             )[:6]
-        )
 
+        )
 
         for user in users:
 
             results.append({
+
                 "type":
                     "user",
 
@@ -1499,18 +1838,53 @@ def search_suggestions(request):
 
                 "subtitle":
                     "User",
-            })
 
+            })
 
     return JsonResponse({
         "results": results
     })
 
 
+# =========================================================
+# AI CHAT
+# =========================================================
 
-@login_required
+@login_required(
+    login_url="login"
+)
 @require_POST
-def ai_chat(request):
+def ai_chat(
+    request
+):
+
+    # =====================================================
+    # RATE LIMIT
+    # =====================================================
+
+    rate_key = (
+        f"ai_rate_limit_user_{request.user.id}"
+    )
+
+    request_count = cache.get(
+        rate_key,
+        0
+    )
+
+    if request_count >= AI_MAX_REQUESTS:
+
+        return JsonResponse(
+            {
+                "error":
+                    "You have sent too many messages. "
+                    "Please try again later."
+            },
+            status=429
+        )
+
+    # =====================================================
+    # JSON
+    # =====================================================
 
     try:
 
@@ -1518,67 +1892,115 @@ def ai_chat(request):
             request.body
         )
 
-    except json.JSONDecodeError:
+    except (
+        json.JSONDecodeError,
+        UnicodeDecodeError,
+    ):
 
         return JsonResponse(
             {
-                "error": "Invalid request."
+                "error":
+                    "Invalid request."
             },
             status=400
         )
 
+    if not isinstance(
+        data,
+        dict
+    ):
+
+        return JsonResponse(
+            {
+                "error":
+                    "Invalid request."
+            },
+            status=400
+        )
 
     question = data.get(
         "question",
         ""
-    ).strip()
+    )
 
+    if not isinstance(
+        question,
+        str
+    ):
+
+        return JsonResponse(
+            {
+                "error":
+                    "Invalid question."
+            },
+            status=400
+        )
+
+    question = (
+        question.strip()
+    )
 
     if not question:
 
         return JsonResponse(
             {
-                "error": "Please enter a question."
+                "error":
+                    "Please enter a question."
             },
             status=400
         )
-
 
     if len(question) > 1000:
 
         return JsonResponse(
             {
-                "error": "Your question is too long."
+                "error":
+                    "Your question is too long."
             },
             status=400
         )
 
+    # =====================================================
+    # COUNT REQUEST
+    # =====================================================
+
+    cache.set(
+        rate_key,
+        request_count + 1,
+        AI_RATE_LIMIT_SECONDS
+    )
+
+    # =====================================================
+    # OPENAI
+    # =====================================================
 
     try:
 
-        answer = ask_gdbr_ai(
-            question
+        answer = (
+            ask_gdbr_ai(
+                question
+            )
         )
 
     except Exception as error:
 
         print(
             "GDBR AI ERROR:",
-            type(error).__name__,
-            repr(error)
+            type(error).__name__
         )
 
         return JsonResponse(
             {
                 "error":
-                    "The AI assistant is temporarily unavailable."
+                    "The AI assistant is "
+                    "temporarily unavailable."
             },
             status=500
         )
 
-
     return JsonResponse(
         {
-            "answer": answer
+            "answer":
+                answer
         }
     )
