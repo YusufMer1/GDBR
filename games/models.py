@@ -36,12 +36,6 @@ class Game(models.Model):
         null=True,
         blank=True
     )
-    igdb_id = models.IntegerField(
-        unique=True,
-        null=True,
-        blank=True
-    )
-    
 
     def save(self, *args, **kwargs):
         if not self.slug and self.title:
@@ -52,10 +46,31 @@ class Game(models.Model):
         return self.title
 
 class Comment(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey('account.Profile',on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+
+    user = models.ForeignKey(
+        "account.Profile",
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+
+    content = models.TextField(
+        max_length=2000
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.game.title}"
 
 
 class GameOfTheYear(models.Model):

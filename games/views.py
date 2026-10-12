@@ -37,6 +37,7 @@ from .models import (
     GameSeries,
     GameLibrary,
     GameLibraryView,
+    Comment
 )
 
 
@@ -456,7 +457,10 @@ def game_detail(
 
     comments = (
         game.comments
-        .all()
+        .select_related(
+            "user",
+            "user__user"
+        )
         .order_by("-created_at")
     )
 
@@ -508,44 +512,7 @@ def game_detail(
 
             })
 
-    # =====================================================
-    # COMMENTS POST
-    # =====================================================
-
-    if (
-        request.user.is_authenticated
-        and request.method == "POST"
-    ):
-
-        content = request.POST.get(
-            "content",
-            ""
-        ).strip()
-
-        if content:
-
-            if len(content) > 2000:
-
-                messages.error(
-                    request,
-                    "Comment cannot exceed "
-                    "2000 characters."
-                )
-
-                return redirect(
-                    "game_detail",
-                    slug=slug
-                )
-
-            game.comments.create(
-                user=request.user,
-                content=content
-            )
-
-        return redirect(
-            "game_detail",
-            slug=slug
-        )
+    
 
     return render(
         request,
@@ -2003,4 +1970,118 @@ def ai_chat(
             "answer":
                 answer
         }
+    )
+
+
+@login_required
+@require_POST
+def add_comment(request, slug):
+
+    game = get_object_or_404(
+        Game,
+        slug=slug
+    )
+
+    content = request.POST.get(
+        "content",
+        ""
+    ).strip()
+
+    if not content:
+        messages.error(
+            request,
+            "Comment cannot be empty."
+        )
+
+        return redirect(
+            "game_detail",
+            slug=game.slug
+        )
+
+    if len(content) > 2000:
+        messages.error(
+            request,
+            "Comment cannot be longer than 2000 characters."
+        )
+
+        return redirect(
+            "game_detail",
+            slug=game.slug
+        )
+
+    profile = getattr(
+        request.user,
+        "profile",
+        None
+    )
+
+    if profile is None:
+        messages.error(
+            request,
+            "Your profile could not be found."
+        )
+
+        return redirect(
+            "game_detail",
+            slug=game.slug
+        )
+
+    Comment.objects.create(
+        game=game,
+        user=profile,
+        content=content
+    )
+
+    messages.success(
+        request,
+        "Your comment has been posted."
+    )
+
+    return redirect(
+        "game_detail",
+        slug=game.slug
+    )
+
+
+@login_required
+@require_POST
+def delete_comment(request, comment_id):
+
+    comment = get_object_or_404(
+        Comment,
+        id=comment_id
+    )
+
+    profile = getattr(
+        request.user,
+        "profile",
+        None
+    )
+
+    if (
+        comment.user != profile
+        and not request.user.is_staff
+    ):
+        messages.error(
+            request,
+            "You cannot delete this comment."
+        )
+
+        return redirect(
+            "game_detail",
+            slug=comment.game.slug
+        )
+
+    game_slug = comment.game.slug
+
+    comment.delete()
+
+    messages.success(
+        request,
+        "Comment deleted."
+    )
+
+    return redirect(
+        "game_detail",
+        slug=game_slug
     )
